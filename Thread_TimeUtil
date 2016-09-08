@@ -1,0 +1,14 @@
+                                                                    TimeUtil
+                                                                    
+TimeUnit是什麽？
+    TimeUtil是java.util.concurrent包下面的一个类，TimeUtil提供了可读性更好的线程暂停操作，通常来替换Thread.sleep()，Thread,sleep()方法是一
+个静态方法，暂停线程时它不会释放锁，该方法会抛出InterrupttedException异常（如果有线程中断了当前线程）。但是我们很多人并没有注意的一个潜在
+的问题就是它的可读性。Thread.sleep()是一个重载方法，可以接收长整型毫秒和长整型的纳秒参数，这样对程序员造成的问题就是很难知道到底当前线程是
+睡眠了多少秒、分、小时或者天。看看下面的Thread.sleep()方法：Thread.sleep(2400000)或者Thread.sleep(4*60*1000)可读性都是很差。
+
+TimeUnit类解决了这个问题，通过指定DAYS、HOURS、MINUTES、SECONDS、MILLISECONDS和NANOSECONDS。
+
+线程睡眠4分钟：TimeUnit.MINUTES.sleep(4);
+
+除了sleep的功能外，TimeUtil还提供了便捷方法用于把时间转换为不同单位，例如，将秒转换为毫秒，可以使用下面的代码：
+                  TimeUtil.SECONDS.toMillis(44)     返回44,000
