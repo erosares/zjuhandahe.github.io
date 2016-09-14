@@ -24,5 +24,19 @@ Web测试工具
 3.对于下载流量峰值的测试：与第2点类似，测试一定时间内下载多大流量值时数据采集程序会被网站阻止，同时，在程序恰好被阻止时和程序恰好被解封时，应记录时间点；
 4.对于下载速率得测试：多次测试下载速率并记录，最后取平均值；
 5.对于延时时间的测试：记录发出请求时间点到信息返回时间点之间的时间段值。
+
+
+
+在云端linux系统中安装http_load命令行测试工具，并将数据源网站分布在不同地区的URL地址全部设置在urls.txt文件中，在云端各区域的linux
+系统中运行命令：http_load -parallel 5 -fetches 1000 urls.txt（此命令表示同时使用5个进程，随机访问urls.txt中的网址列表，总共访问
+urls.txt中所有url各1000次），最终可得到结果：
+        （1）a fetches, b max parallel, c bytes, in d seconds;
+        （2）e mean bytes/connection;
+        （3）f fetches/sec, g bytes/sec;
+        （4）msecs/connect: h mean, i max, j min;
+        （5）msecs/first-response: k mean, m max, n min.
+    其中a,b,c,d,e,f,g,h,i,j,k,m,m均为常数，（1）表示测试中运行了a个请求，最大的并发进程数是b，总计传输的数据是cbytes，运行的时间是d秒，（2）表示每一连接平均传输的数据量
+e，（3）表示每秒的响应请求为f，每秒传递的数据为g bytes/sec，（4）表示每连接的平均响应时间是h msecs，最大的响应时间i msecs，最小的
+响应时间j msecs。则可记录访问频率峰值Fu0=a（次/s）、网络延时间Td0=h（ms）和流量限制I0=g（Byte/s）。
 ****************************************************************************************************************************************
 
