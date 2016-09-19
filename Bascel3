@@ -1,0 +1,421 @@
+
+
+
+
+
+ESP
+Basel III Ready Cycle Optimization 
+(Agency and EC)
+
+		Stage: Analyze
+Functional Specifications Document (FSD)
+Document Version: 0.6
+Aug1st 2016
+
+
+DOCUMENT ACCOUNTABILITY
+The goal of the Accountability Matrix is to facilitate involving the right people at the right time in a project. The tables below reflect the people involved in this project and identify their roles for this deliverable.
+PROJECT BOARD
+The project board is responsible for the continued integrity of the project, from all points of view. They continually assess the project’s viability and alignment with the corporation’s overall strategic objectives. They monitor the project’s status, issues, questions and concerns and provide perspective, advice, recommendations and decisions to guide the project to successful completion.
+
+
+Project Board Member Role	
+Name, Organization
+Project Sponsor	
+Senior Business Representative	Howard Russell, Pamela Bukowski
+Senior Technology Representative	Lynnea Raper
+Project Manager 	Richard Woodland
+ATRACK INFORMATION
+Project Name	Request Name
+ORI Basel III	BASEL Support and Long Term Implementation (ERM) 
+CREATED BY
+As reflected in the Accountability Matrix, deliverables are produced by the document “Owner” as well as the project “Participants”. The owner has responsibility for coordinating the participation, review and approval of others, including physically writing and distributing the document. As a subject matter expert, participants have responsibility for providing relevant input to ensure the completeness and accuracy of the content of the deliverable.
+Responsible for Creation	Function	Name, Organization	Comments
+Owner	Project Management	Richard Woodland	
+Participants	Project Management	Cynthia Lloyd	
+	Business  Analysis	Suresh Rangasamy
+Krishna Kotipalli
+Bharathi Pradeep	
+	Architecture		
+	Development		
+	Data Admin & Engineering		
+	Information Security		
+	User Acceptance		
+	Desktop Integration		
+	User Deployment		
+	Networking		
+	Configuration Mgmt.		
+	Middleware		
+	System Admin. & Support		
+	Capacity Planning		
+	Help Desk Support 		
+	Contingency Planning		
+	Finance		
+	Procurement		
+CURRENT VERSION REVIEWED BY
+As reflected in the Accountability Matrix, “Reviewers” are non-approving stakeholders who have the opportunity to comment on drafts of the deliverables.
+Function	Name, Organization 	Review Date	Comments
+Business	Pamela Bukowski		
+Project Management	Richard Woodland		
+Technology	Lynnea Raper		
+Participants	RRIT team		
+APPROVED BY
+As reflected in the Accountability Matrix, “Approvers” are organizationally responsible for validating the content of their component of this deliverable. A deliverable is considered a draft until all approvers formally sign off on the document.
+Function	Name
+Organization 	Sign-off
+Date	Approved (Yes/No)	Comments or 
+Signature if Hardcopy Approval*
+Business	Pamela Bukowski			
+Project Management	Richard Woodland			
+Technology				
+
+APPROVED VERSION COPIED TO
+Name 	Organization
+	
+	
+ 
+Table of Contents
+
+1.	OVERVIEW	5
+2.	DOCUMENT INTRODUCTION	12
+3.	ASSUMPTIONS	13
+4.	BUSINESS REQUIREMENTS	14
+
+1.	OVERVIEW
+
+The ESP system currently executes 2 Basel III cycles (Ready1, Ready2) for any given day spanning Category Loads, Enrichment, Proration and Extracts processes. The Enrichment process gets repeated in entirety every time when the Ready2 and subsequent B3 cycles are run for a given day. Running the Full Enrichment process one time in full for a given day (as part of Ready1 cycle) is sufficient for Basel III purposes. Whereas, for the Ready2 and subsequent cycles we only need to run a subset of Enrichment functions necessary to override the Basel III flags. 
+To rationalize the Enrichment process for Ready2 and subsequent cycles (aka Basel III Override Cycle) there by improving Basel III End to End Cycle Timings, the project team and the business is considering the below changes in the Agency & Enhanced Custody Enrichment process in ESP platform.
+Currently, the Enrichment cycle takes about 45 Minutes on a typical record count of 1.5 Million (excluding Derived Code = 2 records). Hence, rationalizing the Enrichment cycle could result in considerable time savings there by reducing the overall Basel III cycle. 
+
+Manual Ratings:
+Cumulatively we have about 250+ securities using the Manual Ratings data entered by the users there by impacting about 6,000 position records. This includes all cycles (Ready1, Ready2 and subsequent cycles).
+
+On 31Mar2016, Users will add new manual ratings for 15 security records, impacting 113 security position records.
+
+B3 Overrides:
+Cumulatively we override about 200+ cumulative securities based on the Override data uploaded by the users over a period of time there by impacting about 4000+ positions records. This includes all cycles (Ready1, Ready2 and subsequent cycles).
+
+On 31Mar2016, Users added new overrides for 9 source/security records, impacting 408 security position records.
+
+31Mar2016 Analysis Results:
+Total security position records for 31Mar2016 = 1,368,988 (1.36 Million)
+Security position records needing manual rating refresh = 113
+Security position records requiring overrides = 408
+Effective, Total security position records requiring to undergo Ready 2 cycle = 521
+
+
+Basel III Process Cycle	No. Security Position Records Enriched	Comments
+Ready 1	1,368,988	Approx. 1.36 Million
+Current Ready 2 & Onwards	1,368,988	Approx. 1.36 Million
+Proposed Ready 2 & Onwards	521	Only 521
+
+
+
+1.	Create an Override Enrichment Cycle
+2.	Identify New Security Overrides uploaded by user and apply overrides
+3.	Manual Ratings:
+a.	Refresh Manual Ratings category
+b.	Identify securities requiring an update to Manual Ratings and capture the change for audit purposes
+c.	For identified securities, Recalculate Rating Grades based on updated manual ratings
+d.	For identified securities, Recalculate Rating Eligibility (Coll Eligibility Flag & Loan Sec Eligibility Flag) 
+e.	In case of change in flag values, Re-Calculate Investment Grade, Pre Eligibility Basel III flags
+4.	B3 Overrides or Manual Ratings refreshed securities:
+a.	Only for identified securities, Apply New Investment Grade and the New Overrides as required and Recalculate B3 Enhanced Collateral Eligibility & B3 Security Eligibility Flags
+b.	Override Main Index Flag as required
+c.	Override FRB STD Classification as required 
+5.	In case of change in B3 Security Eligibility or Main Index Flags change – Recalculate FRB STD Classification
+6.	Override B3 Liquidity Flag
+7.	In case of change in Rating Grades, Recalculate Liquidity for security positions classified under B3 Asset Class = ‘Securitizations’ 
+ 
+Current Basel III Ready 2 Cycle Flow:
+ 
+ 
+Proposed Basel III Ready 2 Cycle Flow:
+
+ 
+
+
+
+Basel III Fields in Enriched Data Mart:
+Current Flow - Number of Basel III Fields Calculated = 87 (All Securities)
+  		EC : 45 Fields
+AG : 42 Fields
+Proposed Flow - Number of Basel III Fields Calculated = 42 (Select Securities)
+		  EC : 21 Fields
+  AG : 21 Fields
+ 
+
+#
+TABLE_NAME	COLUMN_NAME	B3 Ready1 Cycle	Current 
+B3 Ready2 & Onward Cycles	Proposed 
+B3 Ready2 & Onward Cycles	Comments
+1	DM_AG_POSN_B3_ENRICHED	B3_ASSET_CLASS	Y	Y	N	 
+2	DM_EC_POSN_B3_ENRICHED	B3_ASSET_CLASS	Y	Y	N	 
+3	DM_EC_POSN_B3_ENRICHED	B3_ASSET_CLASS_EXPTN	Y	Y	N	 
+4	DM_AG_POSN_B3_ENRICHED	B3_ASSET_CLASS_SRC	Y	Y	N	 
+5	DM_EC_POSN_B3_ENRICHED	B3_ASSET_CLASS_SRC	Y	Y	N	
+6	DM_AG_POSN_B3_ENRICHED	B3_ASSET_SUB_CLASS	Y	Y	N	 
+7	DM_EC_POSN_B3_ENRICHED	B3_ASSET_SUB_CLASS	Y	Y	N	 
+8	DM_AG_POSN_B3_ENRICHED	B3_ASSET_SUBCLASS_EXPTN	Y	Y	N	 
+9	DM_EC_POSN_B3_ENRICHED	B3_ASSET_SUBCLASS_EXPTN	Y	Y	N	 
+10	DM_AG_POSN_B3_ENRICHED	B3_ASSET_SUBCLASS_SRC	Y	Y	N	 
+11	DM_EC_POSN_B3_ENRICHED	B3_ASSET_SUBCLASS_SRC	Y	Y	N	 
+12	DM_AG_POSN_B3_ENRICHED	B3_DER_RATING_GRAD_ID	Y	Y	Y	Only for Select Securities
+13	DM_EC_POSN_B3_ENRICHED	B3_DER_RATING_GRAD_ID	Y	Y	Y	Only for Select Securities
+14	DM_AG_POSN_B3_ENRICHED	B3_DER_RATING_GRAD_SRC	Y	Y	Y	Only for Select Securities
+15	DM_EC_POSN_B3_ENRICHED	B3_DER_RATING_GRAD_SRC	Y	Y	Y	Only for Select Securities
+16	DM_AG_POSN_B3_ENRICHED	B3_DERIVED_COUNTRY	Y	Y	N	 
+17	DM_EC_POSN_B3_ENRICHED	B3_DERIVED_COUNTRY	Y	Y	N	 
+18	DM_AG_POSN_B3_ENRICHED	B3_DERIVED_COUNTRY_MSG	Y	Y	N	 
+19	DM_EC_POSN_B3_ENRICHED	B3_DERIVED_COUNTRY_MSG	Y	Y	N	 
+20	DM_AG_POSN_B3_ENRICHED	B3_DERIVED_PRICE	Y	Y	N	 
+21	DM_EC_POSN_B3_ENRICHED	B3_DERIVED_PRICE	Y	Y	N	 
+22	DM_AG_POSN_B3_ENRICHED	B3_DERIVED_PRICE_SRC	Y	Y	N	 
+23	DM_EC_POSN_B3_ENRICHED	B3_DERIVED_PRICE_SRC	Y	Y	N	 
+24	DM_AG_POSN_B3_ENRICHED	B3_DERIVED_PRICE_USD	Y	Y	N	 
+25	DM_EC_POSN_B3_ENRICHED	B3_DERIVED_PRICE_USD	Y	Y	N	 
+26	DM_AG_POSN_B3_ENRICHED	B3_DRVD_ENH_COLL_ELIG_FLAG	Y	Y	Y	Only for Select Securities
+27	DM_EC_POSN_B3_ENRICHED	B3_DRVD_ENH_COLL_ELIG_FLAG	Y	Y	Y	Only for Select Securities
+28	DM_AG_POSN_B3_ENRICHED	B3_DRVD_SECURITY_ELIG_FLAG	Y	Y	Y	Only for Select Securities
+29	DM_EC_POSN_B3_ENRICHED	B3_DRVD_SECURITY_ELIG_FLAG	Y	Y	Y	Only for Select Securities
+30	DM_AG_POSN_B3_ENRICHED	B3_ERM_COLL_INDX_FLG	Y	Y	N	 
+31	DM_EC_POSN_B3_ENRICHED	B3_ERM_COLL_INDX_FLG	Y	Y	N	 
+32	DM_AG_POSN_B3_ENRICHED	B3_ETF_FND_FLG_FOCUS_FIELDS	Y	Y	N	 
+33	DM_EC_POSN_B3_ENRICHED	B3_ETF_FND_FLG_FOCUS_FIELDS	Y	Y	N	 
+34	DM_AG_POSN_B3_ENRICHED	B3_ETF_FUND_FLG	Y	Y	N	 
+35	DM_EC_POSN_B3_ENRICHED	B3_ETF_FUND_FLG	Y	Y	N	 
+36	DM_EC_POSN_B3_ENRICHED	B3_ETF_FUND_FLG_SRC	Y	Y	N	 
+37	DM_EC_POSN_B3_ENRICHED	B3_EXCHANGE_RATE	Y	Y	N	 
+38	DM_AG_POSN_B3_ENRICHED	B3_FRB_STD_CLASS	Y	Y	Y	Only for Select Securities
+39	DM_EC_POSN_B3_ENRICHED	B3_FRB_STD_CLASS	Y	Y	Y	Only for Select Securities
+40	DM_AG_POSN_B3_ENRICHED	B3_GUARANTEE	Y	Y	N	 
+41	DM_EC_POSN_B3_ENRICHED	B3_GUARANTEE	Y	Y	N	 
+42	DM_AG_POSN_B3_ENRICHED	B3_INTERNAL_RATINGS	Y	Y	N	 
+43	DM_EC_POSN_B3_ENRICHED	B3_INTERNAL_RATINGS	Y	Y	N	 
+44	DM_AG_POSN_B3_ENRICHED	B3_INV_GRADE_FLG	Y	Y	Y	Only for Select Securities
+45	DM_EC_POSN_B3_ENRICHED	B3_INV_GRADE_FLG	Y	Y	Y	Only for Select Securities
+46	DM_AG_POSN_B3_ENRICHED	B3_INV_GRADE_FLG_EXPN	Y	Y	Y	Only for Select Securities
+47	DM_EC_POSN_B3_ENRICHED	B3_INV_GRADE_FLG_EXPN	Y	Y	Y	Only for Select Securities
+48	DM_AG_POSN_B3_ENRICHED	B3_LIQUID_FLAG	Y	Y	Y	Only for Select Securities
+49	DM_EC_POSN_B3_ENRICHED	B3_LIQUID_FLAG	Y	Y	Y	Only for Select Securities
+50	DM_AG_POSN_B3_ENRICHED	B3_LIQUID_RSN	Y	Y	Y	Only for Select Securities
+51	DM_EC_POSN_B3_ENRICHED	B3_LIQUID_RSN	Y	Y	Y	Only for Select Securities
+52	DM_AG_POSN_B3_ENRICHED	B3_LN_SEC_ELG_FLAG	Y	Y	Y	Only for Select Securities
+53	DM_EC_POSN_B3_ENRICHED	B3_LN_SEC_ELG_FLAG	Y	Y	Y	Only for Select Securities
+54	DM_AG_POSN_B3_ENRICHED	B3_LOCAL_CCY_ID	Y	Y	N	 
+55	DM_AG_POSN_B3_ENRICHED	B3_MAIN_INDX_FLG	Y	Y	Y	Only for Select Securities
+56	DM_EC_POSN_B3_ENRICHED	B3_MAIN_INDX_FLG	Y	Y	Y	Only for Select Securities
+57	DM_AG_POSN_B3_ENRICHED	B3_MAT_GRP	Y	Y	N	 
+58	DM_EC_POSN_B3_ENRICHED	B3_MAT_GRP	Y	Y	N	 
+59	DM_EC_POSN_B3_ENRICHED	B3_MAT_GRP_EXPTN	Y	Y	N	 
+60	DM_AG_POSN_B3_ENRICHED	B3_MAT_GRP_SRC	Y	Y	N	 
+61	DM_EC_POSN_B3_ENRICHED	B3_MAT_GRP_SRC	Y	Y	N	 
+62	DM_AG_POSN_B3_ENRICHED	B3_NOT_RESEC_FLG	Y	Y	N	 
+63	DM_EC_POSN_B3_ENRICHED	B3_NOT_RESEC_FLG	Y	Y	N	 
+64	DM_AG_POSN_B3_ENRICHED	B3_OVRD_REASON	Y	Y	Y	Only for Select Securities
+65	DM_EC_POSN_B3_ENRICHED	B3_OVRD_REASON	Y	Y	Y	Only for Select Securities
+66	DM_AG_POSN_B3_ENRICHED	B3_PRICE_TOLERANCE_FLG	Y	Y	N	 
+67	DM_EC_POSN_B3_ENRICHED	B3_PRICE_TOLERANCE_FLG	Y	Y	N	 
+68	DM_AG_POSN_B3_ENRICHED	OVRD_B3_DRVD_ENH_COLL_ELIG_FL	Y	Y	Y	Only for Select Securities
+69	DM_EC_POSN_B3_ENRICHED	OVRD_B3_DRVD_ENH_COLL_ELIG_FL	Y	Y	Y	Only for Select Securities
+70	DM_AG_POSN_B3_ENRICHED	OVRD_B3_DRVD_SECURITY_ELIG_FL	Y	Y	Y	Only for Select Securities
+71	DM_EC_POSN_B3_ENRICHED	OVRD_B3_DRVD_SECURITY_ELIG_FL	Y	Y	Y	Only for Select Securities
+72	DM_AG_POSN_B3_ENRICHED	OVRD_B3_FRB_STD_CLASS	Y	Y	Y	Only for Select Securities
+73	DM_EC_POSN_B3_ENRICHED	OVRD_B3_FRB_STD_CLASS	Y	Y	Y	Only for Select Securities
+74	DM_AG_POSN_B3_ENRICHED	OVRD_B3_LIQUID_FLAG	Y	Y	Y	Only for Select Securities
+75	DM_EC_POSN_B3_ENRICHED	OVRD_B3_LIQUID_FLAG	Y	Y	Y	Only for Select Securities
+76	DM_AG_POSN_B3_ENRICHED	OVRD_B3_MAIN_INDX_FLG	Y	Y	Y	Only for Select Securities
+77	DM_EC_POSN_B3_ENRICHED	OVRD_B3_MAIN_INDX_FLG	Y	Y	Y	Only for Select Securities
+78	DM_AG_POSN_B3_ENRICHED	PRE_B3_DRVD_ENH_COLL_ELIG_FLAG	Y	Y	Y	Only for Select Securities
+79	DM_EC_POSN_B3_ENRICHED	PRE_B3_DRVD_ENH_COLL_ELIG_FLAG	Y	Y	Y	Only for Select Securities
+80	DM_AG_POSN_B3_ENRICHED	PRE_B3_DRVD_SECURITY_ELIG_FLAG	Y	Y	Y	Only for Select Securities
+81	DM_EC_POSN_B3_ENRICHED	PRE_B3_DRVD_SECURITY_ELIG_FLAG	Y	Y	Y	Only for Select Securities
+82	DM_AG_POSN_B3_ENRICHED	PRE_B3_FRB_STD_CLASS	Y	Y	Y	Only for Select Securities
+83	DM_EC_POSN_B3_ENRICHED	PRE_B3_FRB_STD_CLASS	Y	Y	Y	Only for Select Securities
+84	DM_AG_POSN_B3_ENRICHED	PRE_B3_LIQUID_FLAG	Y	Y	Y	Only for Select Securities
+85	DM_EC_POSN_B3_ENRICHED	PRE_B3_LIQUID_FLAG	Y	Y	Y	Only for Select Securities
+86	DM_AG_POSN_B3_ENRICHED	PRE_B3_MAIN_INDX_FLG	Y	Y	N	 
+87	DM_EC_POSN_B3_ENRICHED	PRE_B3_MAIN_INDX_FLG	Y	Y	N	 
+
+1.1	Revision Log
+
+Date	Version	Section	Revision
+17-Mar-2016	0.1		Draft Version
+13-May-2016	0.4		Updated details to identify securities for override cycle
+01-Jun-2016	0.5		Updated Override file values
+01-Aug-2016	0.6		Default Values for ‘Override Type’
+2.	DOCUMENT INTRODUCTION
+The Business Solution Document (BSD) is a deliverable of the Analyze stage of the State Street Corporation Development Process Framework (DPF) and Infrastructure Technology Framework (ITF). It was created using a standardized template to promote consistency in content of deliverables.
+2.1	Deliverable Description
+This document summarizes the results of the Analyze stage of the Principal Availability and Order Management DB project within the broader Enhanced Custody Model (ECM) initiative.  
+The BSD/FSD consists of the following components: 
+•	Requirements 
+•	Current and Future Process Models
+•	Screen Designs
+•	Reporting Designs
+•	Delivery Increments and Deployment Strategies 
+•	Functional Components
+2.2	Customization to Deliverable Standard Content
+The template defines the standard content for this project deliverable.  Project Management has determined the format and that specific content items are not applicable and/or that additional content is required, based upon project scope and complexity. The following table lists the changes to the standard content:
+Customized Content
+(Section or Sub-section Name)	Removed or Added 	Justification for Removing or Adding Content
+		
+		
+		
+2.3	Related Documents
+Document Name	Version Number 	Author	Document Location	Access Means
+				
+				
+
+
+
+
+
+
+
+
+3.	ASSUMPTIONS
+
+1.	We will not be loading the STARSBII. MANUAL_COLL_ELIGIBILITY table data into ESP for the Basel III Ready2 and subsequent cycles. However, this data will be loaded into ESP as part of Basel III Ready1 cycle.
+2.	We will be loading the STARS.MANUAL_RATINGS table data into ESP for the Basel III Ready2 and subsequent cycles
+3.	The Ceres Lowest Rating and corresponding Rating Grades are loaded and being used in ESP enrichment
+4.	The Coll Eligibility Flag dependency, fall back logic removal will be taken up as separate stories as part of other iterations
+5.	The DML Prices related improvements will be taken up as separate stories as part of other iterations
+
+4.	BUSINESS REQUIREMENTS
+
+4.1	Create a New Override Enrichment Cycle in ESP
+
+4.1.1	Create a new process routine in ESP to run only an essential subset of Enrichment Functions as part of Enrichment Process referred as Override Enrichment Cycle throughout this document.
+4.1.2	The proposed process routine in ESP may require new store procedures and/or changes to the existing Enrichment cycle and/or new indexing at table levels.
+4.1.3	The proposed process routine may require Meta model changes also may need new services in ESP
+4.1.4	Users should be able to run the proposed process routine to trigger the Override Enrichment Cycle, hence, impacting only select security positions in the Enriched Data Mart.
+
+4.2	Override File – User Trigger Full Enrichment or Partial 
+4.2.1	Add a new field in Override File and ESP Category 
+  OVERRIDE_TYPE
+4.2.2	Users should be able to update this field along with the other override flags as per the requirement. 
+Intended values: ‘PARTIAL’,’COMPLETE’
+PARTIAL- Partial Enrichment 
+COMPLETE- Complete Enrichment
+Ex: User should use ‘PARTIAL’ to trigger Override Enrichment Cycle (Run on limited records). Alternatively, User can use ‘COMPLETE’ to trigger the Full Enrichment Cycle based on their need.[In Case, where we have both values  'PARTIAL' and 'COMPLETE', 'COMPLETE' Enrichment process should be run.]
+Note: Once the override cycle completes this field will get updated as ‘COMPLETE’ in the override table which holds good for the next day’s run.
+4.2.3	ESP system should be able to trigger the Full Enrichment or Partial Enrichment cycles based on the user input in B3 Override File/Category. 
+
+4.3	Identify New Securities Overridden by user
+4.3.1	Based on the override file uploaded by users, the system should be able identify the new securities overridden as part of Ready2 or subsequent cycles. 
+4.3.2	If no new securities are overridden the enrichment results will be same as before. 
+
+Number of New override records added on 31Mar2016 = 9 Records
+It impacted 408 security positions in Enriched DataMart for 31Mar2016
+Attached is the list of Basel III new overrides done for 31Mar2016.
+ 
+
+4.4	Perform Overrides
+4.4.1	Based on the override file uploaded by users, the system should be able identify the new securities overridden as part of the Ready2 or subsequent cycles. 
+
+4.4.2	For the identified securities, apply the overridden values to the below fields with values from override file uploaded by the users
+1.	B3 Override Reason
+2.	Ovrd B3 Enhanced Coll Eligibility Flag
+3.	Ovrd B3 Security Eligibility Flag
+4.	Ovrd Main Index Flag
+5.	Ovrd B3 FRB Std Classification
+6.	Ovrd B3 Liquidity Flag
+
+4.5	Refresh Manual Ratings Category 
+4.5.1	System should be able refresh the Manual Ratings category as part of the proposed Override Enrichment cycle. 
+4.5.2	As soon as Override Enrichment Cycle is triggered, system should refresh the Manual Ratings category with data available at that point in time.
+
+4.6	Identify New Securities requiring Manual Ratings Refresh 
+4.6.1	System should be able identify the new securities that require a Manual Ratings refresh.
+
+Logic to identify the securities requiring Manual ratings refresh:
+
+1)	Securities that satisfy below conditions should be considered for manual ratings refresh,
+CERES_LOWEST_RATING IS NULL ---No MDD ratings
+B3_DER_RATING_GRAD_SRC <> 'SPUS' --- Not a SFIT security 
+MANUAL_RATING_FLG <> ‘Y’ --- No Manual ratings
+ Position type code (1, 2, 4, 6, 7, 8, 10)---Non cash positions
+
+Sample Query to identify the records from enriched mart,
+
+AG:
+SELECT DISTINCT B3_ASSET_CLASS, B3_ASSET_SUB_CLASS, SEC_SEC_ID, SEC_CUSIP_ID, SEC_SEDOL_ID, SEC_ISIN_ID, MANUAL_RATING_FLG, B3_DER_RATING_GRAD_SRC, POS_TYPE_CD_0 
+FROM ORI.DM_AG_POSN_B3_ENRICHED WHERE AS_OF = '31-MAR-2016'  --- '10-MAY-2016' 
+AND CERES_LOWEST_RATING IS NULL 
+AND POS_TYPE_CD_0 NOT IN (3, 5, 9) 
+AND B3_DER_RATING_GRAD_SRC <> 'SPUS' 
+AND MANUAL_RATING_FLG <> 'Y'
+ORDER BY SEC_SEC_ID, B3_ASSET_CLASS, B3_ASSET_SUB_CLASS, SEC_CUSIP_ID,
+SEC_SEDOL_ID, SEC_ISIN_ID, MANUAL_RATING_FLG, B3_DER_RATING_GRAD_SRC, POS_TYPE_CD_0 ; --- 15 SECURITIES 
+
+EC:
+SELECT DISTINCT SEC_SEC_ID, SEC_CUSIP_ID, SEC_SEDOL_ID, SEC_ISIN_ID 
+FROM ORI.DM_EC_POSN_B3_ENRICHED WHERE AS_OF = '10-MAY-2016' 
+AND CERES_LOWEST_RATING IS NULL
+ AND EC_POSITION_TYPE_CD IN (1, 2, 4, 6, 7, 8, 10)
+AND B3_DER_RATING_GRAD_SRC <> 'SPUS' 
+AND MANUAL_RATING_FLG <> 'Y'; 
+
+2)	Records identified from above step should be verified in the Manual ratings table for any addition in the ratings
+
+4.6.2	The Manual Ratings should be applied to respective rating fields of the security
+
+1.	SEC_SP_RATING_TXT
+2.	SEC_MOODY_RATING_TXT
+3.	SEC_FITCH_RATING_TXT
+
+Note: The existing logic, give precedence to manual ratings over OIR ratings for securities with Null SP and Null Moody and Null Fitch Ratings, still holds good. There is no change to this logic.
+
+4.6.3	The Manual Ratings Flag should be set to Y for these security positions indicating the use of manual ratings, for audit purposes.
+
+
+4.7	Re-Calculate Rating Grades for Select Securities
+4.7.1	Select the securities updated with manual rating, if the Ceres Rating Grade is not available, then Recalculate Lowest Rating Text and corresponding Rating Grades based on updated manual ratings. 
+Please note there is no change to the existing logic for Rating Grade derivation. 
+
+4.7.2	The Re-Calculation is necessary since any change in Rating Grade affects:
+1.	Basel III Eligibility
+2.	Liquidity (Only for B3 Asset Class = Securitizations)
+
+Number of New Manual Ratings records that will be added (31Mar2016) = 15 Records
+
+It will impact 113 security positions in Enriched DataMart for 31Mar2016
+
+Attached is the list of Manual Ratings that will be added for 31Mar2016
+
+ 
+
+4.8	Re-Calculate Basel III Flags in case of a change in Rating Grades for Select Securities
+4.8.1	Only for identified securities, Recalculate the below flags since a change in Rating Grade affects the below Basel III fields
+1.	Coll Eligibility Flag (Rating eligibility proxy for Non-Sovereign Flow)
+2.	Loan Sec Eligibility Flag (Rating eligibility proxy for Non-Sovereign Flow)
+3.	B3 Investment Grade Flag
+4.	Pre B3 Enhanced Coll Eligibility Flag
+5.	Pre B3 Security Eligibility Flag
+6.	Pre B3 FRB Std Classification
+7.	Pre B3 Liquidity Flag
+4.8.2	Coll Eligibility Flag: Recalculate this field since the underlying Rating Grade may have changed and it’s used as a proxy for Rating Eligibility in Non-Sovereign flow for collaterals.
+4.8.3	Loan Sec Eligibility Flag: Recalculate this field since the underlying Rating Grade may have changed and its used as a proxy for Rating Eligibility in Non-Sovereign flow for loans
+4.8.4	B3 Investment Grade Flag: Recalculate this field since the underlying Rating Grade may have changed and its used as an input to other Basel III Eligibility Flags
+4.8.5	Pre B3 Enhanced Coll Eligibility Flag: Recalculate this field since the underlying Investment Grade Flag may have changed
+4.8.6	Pre B3 Security Eligibility Flag: Recalculate this field since the underlying Enhanced Coll Eligibility or Investment Grade Flag may have changed 
+4.8.7	Pre B3 FRB STD Classification: Recalculate this field since the underlying Security Eligibility Flag may have changed 
+4.8.8	Pre B3 Liquid Flag: Recalculate this field since the underlying Rating Grade may have changed
+
+4.9	Derive the Final Basel III Flags
+4.9.1	Based on the securities impacted by Manual Ratings refresh or by Override; derive the final Basel III Flags ending the Override Enrichment Cycle
+
+1.	B3 Enhanced Coll Eligibility Flag
+2.	B3 Security Eligibility Flag
+3.	B3 FRB Std Classification
+4.	B3 Liquidity Flag
+
+4.10	Additional Fields to identify New Enrichment Process
+4.10.1	Add a new field in Enrichment mart
+1)	A new field ‘OVERRIDE_CYCLE_FLG’ should be added in enriched mart
+2)	Accepted field values are ‘Y’ or ‘N’ 
+3)	After running the override cycle for qualified Securities/positions for override and manual ratings refresh, ‘Override_Cycle_Flg’ should be updated as ‘Y’ and for all the other securities/positionsit should be ‘N’
+4.10.2	After the override cycle completion, ‘AS_AT’ of all the records should be updated as per the override trigger date time in the enriched mart
+
+Note: No changes to the Proration logic
