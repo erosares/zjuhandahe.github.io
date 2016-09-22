@@ -1,0 +1,88 @@
+Class UtilFunctions:UtilFunctions
+    public class UtilFunctions
+{
+    public static void swap(int[] iarray, int i, int j)
+    {
+        int temp = iarray[i];
+        iarray[i] = iarray[j];
+        iarray[j] = temp;
+    }
+}
+
+Class:SortBubble
+public class SortBubble{
+public void BubbleSort0(int[] numbers)
+    {
+        int i, j;
+        for (i = 0; i < numbers.length; i++)
+        {
+            for (j = i + 1; j < numbers.length; j++)
+            {
+                if (numbers[i] > numbers[j])
+                {
+                    UtilFunctions.swap(numbers, i, j);
+                }
+            }
+        }
+    }
+
+    public void BubbleSort1(int[] numbers)
+    {
+        int i, j;
+        for (i = 0; i < numbers.length; i++)
+        {
+            for (j = numbers.length - 2; j >= i; j--)
+            {
+                if (numbers[j] > numbers[j + 1])
+                {
+                    UtilFunctions.swap(numbers, j, j + 1);
+                }
+            }
+        }
+    }
+
+    public void BubbleSort2(int[] numbers)
+    {
+        int i, j;
+        boolean flag = true;
+        for (i = 0; i < numbers.length && flag; i++)
+        {
+            flag = false;
+            for (j = numbers.length - 2; j >= i; j--)
+            {
+                UtilFunctions.swap(numbers, j, j + 1);
+                flag = true;
+            }
+        }
+    }
+}
+
+Class:SortSimpleSelection
+public class SortSimpleSelection
+{
+ public void SlectSort(int[] numbers)
+    {
+        int i, j, min;
+        for (i = 0; i < numbers.length; i++)
+        {
+            min = i;
+            for (j = i + 1; j < numbers.length; j++)
+            {
+                if (numbers[min] > numbers[j])
+                {
+                    min = j;
+                }
+            }
+            if (i != min)
+            {
+                UtilFunctions.swap(numbers, i, min);
+            }
+
+        }
+    }
+}
+
+Class:SortStraightInsertion
+public void SortStraightInsertion{
+
+}
