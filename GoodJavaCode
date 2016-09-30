@@ -1,4 +1,5 @@
 https://www.javacodegeeks.com/2015/06/java-programming-tips-best-practices-beginners.html
+https://blog.jooq.org/2013/08/20/10-subtle-best-practices-when-coding-java/
 1.Prefer returning Empty Collections instead of Null
  If a program is returning a collection which does not have any value, make sure an Empty collection is returned rather than Null elements. This saves a lot of “if else” testing on Null Elements.
       public class getLocationName {
@@ -107,4 +108,764 @@ public class shutDownHooksDemo {
     }
 }
 
-6.
+6.Check Oddity
+Have a look at the lines of code below and determine if they can be used to precisely identify if a given number is Odd?
+public boolean oddOrNot(int num) {
+	return num % 2 == 1;
+}
+This can be fixed as follows:
+public boolean oddOrNot(int num) {
+	return (num & 1) != 0;
+}
+Using this code, not only is the problem of negative odd numbers solved, but this code is also highly optimized. Since, Arithmetic and Logical operations are much faster compared to division and multiplication, the results are achieved faster so in second snippet.
+
+7.Difference between single quotes and double quotes
+public class Haha {
+	public static void main(String args[]) {
+	System.out.print("H" + "a");
+	System.out.print('H' + 'a');
+	}
+}
+From the code, it would seem return “HaHa” is returned, but it actually returns Ha169. The reason is that if double quotes are used, the characters are treated as a string but in case of single quotes, the char -valued operands ( ‘H’ and ‘a’ ) to int values through a process known as widening primitive conversion. After integer conversion, the numbers are added and return 169.\
+
+8.Avoiding Memory leaks by simple tricks
+Memory leaks often cause performance degradation of software. Since, Java manages memory automatically, the developers do not have much control. But there are still some standard practices which can be used to protect from memory leakages.
+(1)Always release database connections when querying is complete.
+(2)Try to use Finally block as often possible.
+(3)Release instances stored in Static Tables.
+
+9.Avoiding Deadlocks in Java
+Deadlocks can occur for many different reasons. There is no single recipe to avoid deadlocks. Normally deadlocks occur when one synchronized object is waiting for lock on resources locked by another synchronized object.
+Try running the below program. This program demonstrates a Deadlock. This deadlock arises because both the threads are waiting for the resources which are grabbed by other thread. They both keep waiting and no one releases.
+public class DeadlockDemo {
+   public static Object addLock = new Object();
+   public static Object subLock = new Object();
+
+   public static void main(String args[]) {
+
+      MyAdditionThread add = new MyAdditionThread();
+      MySubtractionThread sub = new MySubtractionThread();
+      add.start();
+      sub.start();
+   }
+private static class MyAdditionThread extends Thread {
+      public void run() {
+         synchronized (addLock) {
+		int a = 10, b = 3;
+		int c = a + b;
+            System.out.println("Addition Thread: " + c);
+            System.out.println("Holding First Lock...");
+            try { Thread.sleep(10); }
+            catch (InterruptedException e) {}
+            System.out.println("Addition Thread: Waiting for AddLock...");
+            synchronized (subLock) {
+               System.out.println("Threads: Holding Add and Sub Locks...");
+            }
+         }
+      }
+   }
+   private static class MySubtractionThread extends Thread {
+      public void run() {
+         synchronized (subLock) {
+		int a = 10, b = 3;
+		int c = a - b;
+            System.out.println("Subtraction Thread: " + c);
+            System.out.println("Holding Second Lock...");
+            try { Thread.sleep(10); }
+            catch (InterruptedException e) {}
+            System.out.println("Subtraction  Thread: Waiting for SubLock...");
+            synchronized (addLock) {
+               System.out.println("Threads: Holding Add and Sub Locks...");
+            }
+         }
+      }
+   }
+}
+Output:
+=====
+Addition Thread: 13
+Subtraction Thread: 7
+Holding First Lock...
+Holding Second Lock...
+Addition Thread: Waiting for AddLock...
+Subtraction  Thread: Waiting for SubLock...
+
+But if the order in which the threads are called is changed, the deadlock problem is resolved.
+public class DeadlockSolutionDemo {
+   public static Object addLock = new Object();
+   public static Object subLock = new Object();
+
+   public static void main(String args[]) {
+
+      MyAdditionThread add = new MyAdditionThread();
+      MySubtractionThread sub = new MySubtractionThread();
+      add.start();
+      sub.start();
+   }
+
+
+private static class MyAdditionThread extends Thread {
+      public void run() {
+         synchronized (addLock) {
+		int a = 10, b = 3;
+		int c = a + b;
+            System.out.println("Addition Thread: " + c);
+            System.out.println("Holding First Lock...");
+            try { Thread.sleep(10); }
+            catch (InterruptedException e) {}
+            System.out.println("Addition Thread: Waiting for AddLock...");
+            synchronized (subLock) {
+               System.out.println("Threads: Holding Add and Sub Locks...");
+            }
+         }
+      }
+   }
+   
+   private static class MySubtractionThread extends Thread {
+      public void run() {
+         synchronized (addLock) {
+		int a = 10, b = 3;
+		int c = a - b;
+            System.out.println("Subtraction Thread: " + c);
+            System.out.println("Holding Second Lock...");
+            try { Thread.sleep(10); }
+            catch (InterruptedException e) {}
+            System.out.println("Subtraction  Thread: Waiting for SubLock...");
+            synchronized (subLock) {
+               System.out.println("Threads: Holding Add and Sub Locks...");
+            }
+         }
+      }
+   }
+}
+Output:
+=====
+Addition Thread: 13
+Holding First Lock...
+Addition Thread: Waiting for AddLock...
+Threads: Holding Add and Sub Locks...
+Subtraction Thread: 7
+Holding Second Lock...
+Subtraction  Thread: Waiting for SubLock...
+Threads: Holding Add and Sub Locks...
+
+10.Reserve memory for Java
+Some of the Java applications can be highly CPU intensive as well as they need a lot of RAM. Such applications generally run slow because of a high RAM requirement. In order to improve performance of such applications, RAM is reserved for Java. So, for example, if we have a Tomcat webserver and it has 10 GB of RAM. If we like, we can allocate RAM for Java on this machine using the following command:
+export JAVA_OPTS="$JAVA_OPTS -Xms5000m -Xmx6000m -XX:PermSize=1024m -XX:MaxPermSize=2048m"
+(1)Xms = Minimum memory allocation pool
+(2)Xmx = Maximum memory allocation pool
+(3)XX:PermSize = Initial size that will be allocated during startup of the JVM
+(4)XX:MaxPermSize = Maximum size that can be allocated during startup of the JVM
+
+11.How to time operations in Java
+There are two standard ways to time operations in Java: System.currentTimeMillis() and System.nanoTime() The question is, which of these to choose and under what circumstances. In principle, they both perform the same action but are different in the following ways:
+(1)System.currentTimeMillis takes somewhere between 1/1000th of a second to 15/1000th of a second (depending on the system) but System.nanoTime() takes around 1/1000,000th of a second (1,000 nanos)
+(2)System.currentTimeMillis takes a few clock cycles to perform Read Operation. On the other hand, System.nanoTime() takes 100+ clock cycles.
+(3)System.currentTimeMillis reflects Absolute Time (Number of millis since 1 Jan 1970 00:00 (Epoch Time)) but System.nanoTime() does not necessarily represent any reference point.
+
+12.Choice between Float and Double
+Data type	Bytes used	Significant figures (decimal)
+Float	             4	                 7
+Double	             8	                 15
+Double is often preferred over float in software where precision is important because of the following reasons:
+Most processors take nearly the same amount of processing time to perform operations on Float and Double. Double offers far more precision in the same amount of computation time.
+
+13.Computation of power
+To compute power (^), java performs Exclusive OR (XOR). In order to compute power, Java offers two options:
+(1)Multiplication:
+double square = double a * double a;							// Optimized
+double cube = double a * double a * double a; 					// Non-optimized
+double cube = double a * double square; 						// Optimized
+double quad = double a * double a * double a * double a;	 		// Non-optimized
+double quad = double square * double square; 					// Optimized
+(2)pow(double base, double exponent):‘pow’ method is used to calculate where multiplication is not possible (base^exponent)
+double cube = Math.pow(base, exponent);
+Math.pow should be used ONLY when necessary. For example, exponent is a fractional value. That is because Math.pow() method is typically around 300-600 times slower than a multiplication.
+
+14.How to handle Null Pointer Exceptions
+Null Pointer Exceptions are quite common in Java. This exception occurs when we try to call a method on a Null Object Reference. For example,
+int noOfStudents = school.listStudents().count;
+If in the above example, if get a NullPointerException, then either school is null or listStudents() is Null. It’s a good idea to check Nulls early so that they can be eliminated.
+private int getListOfStudents(File[] files) {
+	  if (files == null)
+	    throw new NullPointerException("File list cannot be null");
+	}
+
+15.Encode in JSON
+JSON (JavaScript Object Notation) is syntax for storing and exchanging data. JSON is an easier-to-use alternative to XML. Json is becoming very popular over internet these days because of its properties and light weight. A normal data structure can be encoded into JSON and shared across web pages easily. Before beginning to write code, a JSON parser has to be installed. In below examples, we have used json.simple (https://code.google.com/p/json-simple/).
+Below is a basic example of Encoding into JSON:
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+
+public class JsonEncodeDemo {
+	
+	public static void main(String[] args) {
+		
+        JSONObject obj = new JSONObject();
+        obj.put("Novel Name", "Godaan");
+        obj.put("Author", "Munshi Premchand");
+ 
+        JSONArray novelDetails = new JSONArray();
+        novelDetails.add("Language: Hindi");
+        novelDetails.add("Year of Publication: 1936");
+        novelDetails.add("Publisher: Lokmanya Press");
+        
+        obj.put("Novel Details", novelDetails);
+        
+		System.out.print(obj);
+	}
+}
+Output:
+{"Novel Name":"Godaan","Novel Details":["Language: Hindi","Year of Publication: 1936","Publisher: Lokmanya Press"],"Author":"Munshi Premchand"}
+
+16. Decode from JSON
+In order to decode JSON, the developer must be aware of the schema. The details can be found in below example:
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Iterator;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+public class JsonParseTest {
+
+	private static final String filePath = "//home//user//Documents//jsonDemoFile.json";
+	
+	public static void main(String[] args) {
+
+		try {
+			// read the json file
+			FileReader reader = new FileReader(filePath);
+			JSONParser jsonParser = new JSONParser();
+			JSONObject jsonObject = (JSONObject)jsonParser.parse(reader);
+			
+			// get a number from the JSON object
+			Long id =  (Long) jsonObject.get("id");
+			System.out.println("The id is: " + id);			
+
+			// get a String from the JSON object
+			String	type = (String) jsonObject.get("type");
+			System.out.println("The type is: " + type);
+
+			// get a String from the JSON object
+			String	name = (String) jsonObject.get("name");
+			System.out.println("The name is: " + name);
+
+			// get a number from the JSON object
+			Double ppu =  (Double) jsonObject.get("ppu");
+			System.out.println("The PPU is: " + ppu);
+			
+			// get an array from the JSON object
+			System.out.println("Batters:");
+			JSONArray batterArray= (JSONArray) jsonObject.get("batters");
+			Iterator i = batterArray.iterator();
+			// take each value from the json array separately
+			while (i.hasNext()) {
+				JSONObject innerObj = (JSONObject) i.next();
+				System.out.println("ID "+ innerObj.get("id") + 
+						" type " + innerObj.get("type"));
+			}
+
+			// get an array from the JSON object
+			System.out.println("Topping:");
+			JSONArray toppingArray= (JSONArray) jsonObject.get("topping");
+			Iterator j = toppingArray.iterator();
+			// take each value from the json array separately
+			while (j.hasNext()) {
+				JSONObject innerObj = (JSONObject) j.next();
+				System.out.println("ID "+ innerObj.get("id") + 
+						" type " + innerObj.get("type"));
+			}
+			
+
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+		} catch (NullPointerException ex) {
+			ex.printStackTrace();
+		}
+
+	}
+
+}
+jsonDemoFile.json
+{
+	"id": 0001,
+	"type": "donut",
+	"name": "Cake",
+	"ppu": 0.55,
+	"batters":
+		[
+			{ "id": 1001, "type": "Regular" },
+			{ "id": 1002, "type": "Chocolate" },
+			{ "id": 1003, "type": "Blueberry" },
+			{ "id": 1004, "type": "Devil's Food" }
+		],
+	"topping":
+		[
+			{ "id": 5001, "type": "None" },
+			{ "id": 5002, "type": "Glazed" },
+			{ "id": 5005, "type": "Sugar" },
+			{ "id": 5007, "type": "Powdered Sugar" },
+			{ "id": 5006, "type": "Chocolate with Sprinkles" },
+			{ "id": 5003, "type": "Chocolate" },
+			{ "id": 5004, "type": "Maple" }
+		]
+}
+
+The id is: 1
+The type is: donut
+The name is: Cake
+The PPU is: 0.55
+Batters:
+ID 1001 type Regular
+ID 1002 type Chocolate
+ID 1003 type Blueberry
+ID 1004 type Devil's Food
+Topping:
+ID 5001 type None
+ID 5002 type Glazed
+ID 5005 type Sugar
+ID 5007 type Powdered Sugar
+ID 5006 type Chocolate with Sprinkles
+ID 5003 type Chocolate
+ID 5004 type Maple
+
+17. Simple String Search
+Java offers a Library method called indexOf(). This method is used with String Object and it returns the position of index of desired string. If the string is not found then -1 is returned.
+public class StringSearch {
+
+	public static void main(String[] args) {
+		String myString = "I am a String!";
+		
+		if(myString.indexOf("String") == -1) {
+			System.out.println("String not Found!");
+		}
+		else {
+			System.out.println("String found at: " + myString.indexOf("String"));
+		}
+	}
+}
+
+18. Listing content of a directory
+In order to list the contents of a directory, below program can be used. This program simply receives the names of the all sub-directory and files in a folder in an Array and then that array is sequentially traversed to list all the contents.
+import java.io.*;
+
+public class ListContents {
+	public static void main(String[] args) {
+		File file = new File("//home//user//Documents/");
+		String[] files = file.list();
+
+		System.out.println("Listing contents of " + file.getPath());
+		for(int i=0 ; i < files.length ; i++)
+		{
+			System.out.println(files[i]);
+		}
+	}
+}
+
+19. A Simple IO
+In order to read from a file and write to a file, Java offers FileInputStream and FileOutputStream Classes. FileInputStream’s constructor accepts filepath of Input File as argument and creates File Input Stream. Similarly, FileOutputStream’s constructor accepts filepath of Output File as argument and creates File Output Stream.After the file handling is done, it’s important to “close” the streams.
+import java.io.*;
+
+public class myIODemo {
+	public static void main(String args[]) throws IOException {
+		FileInputStream in = null;
+		FileOutputStream out = null;
+		
+		try {
+			in = new FileInputStream("//home//user//Documents//InputFile.txt");
+			out = new FileOutputStream("//home//user//Documents//OutputFile.txt");
+			
+			int c;
+			while((c = in.read()) != -1) {
+				out.write(c);
+			}
+		} finally {
+			if(in != null) {
+				in.close();
+			}
+			if(out != null) {
+				out.close();
+			}
+		}
+	}
+}
+
+20. Executing a shell command from Java
+Java offers Runtime class to execute Shell Commands. Since these are external commands, exception handling is really important. In below example, we illustrate this with a simple example. We are trying to open a PDF file from Shell command.
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+public class ShellCommandExec {
+
+	public static void main(String[] args) {
+		String gnomeOpenCommand = "gnome-open //home//user//Documents//MyDoc.pdf";
+
+		try {
+			Runtime rt = Runtime.getRuntime();
+			Process processObj = rt.exec(gnomeOpenCommand);
+
+			InputStream stdin = processObj.getErrorStream();
+			InputStreamReader isr = new InputStreamReader(stdin);
+			BufferedReader br = new BufferedReader(isr);
+
+			String myoutput = "";
+
+			while ((myoutput=br.readLine()) != null) {
+				myoutput = myoutput+"\n";
+			}
+			System.out.println(myoutput);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+21. Using Regex
+Summary of Regular Expression Constructs (Source: Oracle Website)
+Characters
+x	The character x
+\\	The backslash character
+\0n	The character with octal value 0n (0 <= n <= 7)
+\0nn	The character with octal value 0nn (0 <= n <= 7)
+\0mnn	The character with octal value 0mnn (0 <= m <= 3, 0 <= n <= 7)
+\xhh	The character with hexadecimal value 0xhh
+\uhhhh	The character with hexadecimal value 0xhhhh
+\x{h…h}	The character with hexadecimal value 0xh…h (Character.MIN_CODE_POINT <= 0xh…h <= Character.MAX_CODE_POINT)
+\t	The tab character (‘\u0009’)
+\n	The newline (line feed) character (‘\u000A’)
+\r	The carriage-return character (‘\u000D’)
+\f	The form-feed character (‘\u000C’)
+\a	The alert (bell) character (‘\u0007’)
+\e	The escape character (‘\u001B’)
+\cx	The control character corresponding to x
+ 
+Character classes
+[abc]	a, b, or c (simple class)
+[^abc]	Any character except a, b, or c (negation)
+[a-zA-Z]	a through z or A through Z, inclusive (range)
+[a-d[m-p]]	a through d, or m through p: [a-dm-p] (union)
+[a-z&&[def]]	d, e, or f (intersection)
+[a-z&&[^bc]]	a through z, except for b and c: [ad-z] (subtraction)
+[a-z&&[^m-p]]	a through z, and not m through p: [a-lq-z](subtraction)
+ 
+Predefined character classes
+.	Any character (may or may not match line terminators)
+\d	A digit: [0-9]
+\D	A non-digit: [^0-9]
+\s	A whitespace character: [ \t\n\x0B\f\r]
+\S	A non-whitespace character: [^\s]
+\w	A word character: [a-zA-Z_0-9]
+\W	A non-word character: [^\w]
+ 
+Boundary matchers
+^	The beginning of a line
+$	The end of a line
+\b	A word boundary
+\B	A non-word boundary
+\A	The beginning of the input
+\G	The end of the previous match
+\Z	The end of the input but for the final terminator, if any
+\z	The end of the input
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class RegexMatches
+{
+	private static String pattern =  "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	private static Pattern mypattern = Pattern.compile(pattern);
+	
+	public static void main( String args[] ){
+
+		String valEmail1 = "testemail@domain.com";
+		String invalEmail1 = "....@domain.com";
+		String invalEmail2 = ".$$%%@domain.com";
+		String valEmail2 = "test.email@domain.com";
+
+		System.out.println("Is Email ID1 valid? "+validateEMailID(valEmail1));
+		System.out.println("Is Email ID1 valid? "+validateEMailID(invalEmail1));
+		System.out.println("Is Email ID1 valid? "+validateEMailID(invalEmail2));
+		System.out.println("Is Email ID1 valid? "+validateEMailID(valEmail2));
+
+	}
+	
+	public static boolean validateEMailID(String emailID) {
+		Matcher mtch = mypattern.matcher(emailID);
+		if(mtch.matches()){
+			return true;
+		}
+		return false;
+	} 	
+}
+
+22. Simple Java Swing Example
+With the help of Java Swing GUI can be created. Java offers Javax which contains “swing”. The GUI using swing begin with extending JFrame. Boxes are added so they can contain GUI components like Button, Radio Button, Text box, etc. These boxes are set on top of Container.
+import java.awt.*; 
+import javax.swing.*;  
+
+public class SwingsDemo extends JFrame 
+{ 
+	public SwingsDemo() 
+	{
+		String path = "//home//user//Documents//images";
+		Container contentPane = getContentPane(); 
+		contentPane.setLayout(new FlowLayout());   
+		
+		Box myHorizontalBox = Box. createHorizontalBox();  
+		Box myVerticleBox = Box. createVerticalBox();   
+		
+		myHorizontalBox.add(new JButton("My Button 1")); 
+		myHorizontalBox.add(new JButton("My Button 2")); 
+		myHorizontalBox.add(new JButton("My Button 3"));   
+
+		myVerticleBox.add(new JButton(new ImageIcon(path + "//Image1.jpg"))); 
+		myVerticleBox.add(new JButton(new ImageIcon(path + "//Image2.jpg"))); 
+		myVerticleBox.add(new JButton(new ImageIcon(path + "//Image3.jpg")));   
+		
+		contentPane.add(myHorizontalBox); 
+		contentPane.add(myVerticleBox);   
+		
+		pack(); 
+		setVisible(true);
+	} 
+	
+	public static void main(String args[]) { 
+		new SwingsDemo(); 
+	}  
+}
+
+23. Play a sound with Java
+Playing sound is a common requirement in Java, especially along with Games.
+This demo explains how to play an Audio file along with Java code.
+import java.io.*;
+import java.net.URL;
+import javax.sound.sampled.*;
+import javax.swing.*;
+
+// To play sound using Clip, the process need to be alive.
+// Hence, we use a Swing application.
+public class playSoundDemo extends JFrame {
+
+   // Constructor
+   public playSoundDemo() {
+      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      this.setTitle("Play Sound Demo");
+      this.setSize(300, 200);
+      this.setVisible(true);
+
+      try {
+         URL url = this.getClass().getResource("MyAudio.wav");
+         AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+         Clip clip = AudioSystem.getClip();
+         clip.open(audioIn);
+         clip.start();
+      } catch (UnsupportedAudioFileException e) {
+         e.printStackTrace();
+      } catch (IOException e) {
+         e.printStackTrace();
+      } catch (LineUnavailableException e) {
+         e.printStackTrace();
+      }
+   }
+
+   public static void main(String[] args) {
+      new playSoundDemo();
+   }
+}
+
+24. PDF Export
+Export a table to PDF is a common requirement in Java programs. Using itextpdf, it becomes really easy to export PDF.
+import java.io.FileOutputStream;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+public class DrawPdf {
+
+	  public static void main(String[] args) throws Exception {
+	    Document document = new Document();
+	    PdfWriter.getInstance(document, new FileOutputStream("Employee.pdf"));
+	    document.open();
+	    
+	    Paragraph para = new Paragraph("Employee Table");
+	    para.setSpacingAfter(20);
+	    document.add(para);
+	    
+	    PdfPTable table = new PdfPTable(3);
+	    PdfPCell cell = new PdfPCell(new Paragraph("First Name"));
+
+	    table.addCell(cell);
+	    table.addCell("Last Name");
+	    table.addCell("Gender");
+	    table.addCell("Ram");
+	    table.addCell("Kumar");
+	    table.addCell("Male");
+	    table.addCell("Lakshmi");
+	    table.addCell("Devi");
+	    table.addCell("Female");
+
+	    document.add(table);
+	    
+	    document.close();
+	  }
+	}
+	
+25. Sending Email from Java Code
+Sending email from Java is simple. We need to install Java Mail Jar and set its path in our program’s classpath. The basic properties are set in the code and we are good to send email as mentioned in the code below:
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+
+public class SendEmail
+{
+	public static void main(String [] args)
+	{    
+		String to = "recipient@gmail.com";
+		String from = "sender@gmail.com";
+		String host = "localhost";
+
+		Properties properties = System.getProperties();
+		properties.setProperty("mail.smtp.host", host);
+		Session session = Session.getDefaultInstance(properties);
+
+		try{
+			MimeMessage message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(from));
+
+			message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
+
+			message.setSubject("My Email Subject");
+			message.setText("My Message Body");
+			Transport.send(message);
+			System.out.println("Sent successfully!");
+		}
+		catch (MessagingException ex) {
+			ex.printStackTrace();
+		}
+	}
+}
+
+26. Measuring time
+Many applications require a very precise time measurement. For this purpose, Java provides static methods in System class:
+(1)currentTimeMillis(): Returns current time in MilliSeconds since Epoch Time, in Long.
+long startTime = System.currentTimeMillis();
+long estimatedTime = System.currentTimeMillis() - startTime;
+(2)nanoTime(): Returns the current value of the most precise available system timer, in nanoseconds, in long. nanoTime() is meant for measuring relative time interval instead of providing absolute timing.
+long startTime = System.nanoTime();
+long estimatedTime = System.nanoTime() - startTime;
+
+27. Rescale Image
+An image can rescaled usingAffineTransform. First of all, Image Buffer of input image is created and then scaled image is rendered.
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+
+public class RescaleImage {
+  public static void main(String[] args) throws Exception {
+    BufferedImage imgSource = ImageIO.read(new File("images//Image3.jpg"));
+    BufferedImage imgDestination = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+    Graphics2D g = imgDestination.createGraphics();
+    AffineTransform affinetransformation = AffineTransform.getScaleInstance(2, 2);
+    g.drawRenderedImage(imgSource, affinetransformation);
+    ImageIO.write(imgDestination, "JPG", new File("outImage.jpg"));
+  }
+}
+
+28. Capturing Mouse Hover Coordinates
+By implementing MouseMotionListner Interface, mouse events can be captured. When the mouse is entered in a specific region MouseMoved Event is triggered and motion coordinates can be captured. The following example explains it:
+import java.awt.event.*;
+import javax.swing.*;
+
+public class MouseCaptureDemo extends JFrame implements MouseMotionListener
+{
+	public JLabel mouseHoverStatus;
+
+	public static void main(String args[]) 
+	{
+		new MouseCaptureDemo();
+	}
+
+	MouseCaptureDemo() 
+	{
+		setSize(500, 500);
+		setTitle("Frame displaying Coordinates of Mouse Motion");
+
+		mouseHoverStatus = new JLabel("No Mouse Hover Detected.", JLabel.CENTER);
+		add(mouseHoverStatus);
+		addMouseMotionListener(this);
+		setVisible(true);
+	}
+
+	public void mouseMoved(MouseEvent e) 
+	{
+		mouseHoverStatus.setText("Mouse Cursor Coordinates => X:"+e.getX()+" | Y:"+e.getY());
+	}
+
+	public void mouseDragged(MouseEvent e) 
+	{}
+}
+
+29. FileOutputStream Vs. FileWriter
+File writing in Java is done mainly in two ways: FileOutputStream and FileWriter. Sometimes, developers struggle to choose one among them. This example helps them in choosing which one should be used under given requirements. First, let’s take a look at the implementation part:
+Using FileOutputStream:
+File foutput = new File(file_location_string);
+FileOutputStream fos = new FileOutputStream(foutput);
+BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fos));
+output.write("Buffered Content");
+Using FileWriter:
+FileWriter fstream = new FileWriter(file_location_string);
+BufferedWriter output = new BufferedWriter(fstream);
+output.write("Buffered Content");
+According to Java API specifications:
+FileOutputStream is meant for writing streams of raw bytes such as image data. For writing streams of characters, consider using FileWriter.
+This makes it pretty clear that for image type of Data FileOutputStream should be used and for Text type of data FileWriter should be used.
+
+Additional Suggestions
+Use Collections
+
+Java is shipped with a few collection classes – for example, Vector, Stack, Hashtable, Array. The developers are encouraged to use collections as extensively as possible for the following reasons:
+Use of collections makes the code reusable and interoperable.
+Collections make the code more structured, easier to understand and maintainable.
+Out of the box collection classes are well tested so the quality of code is good.
+10-50-500 Rule
+
+In big software packages, maintaining code becomes very challenging. Developers who join fresh ongoing support projects, often complain about: Monolithic Code, Spaghetti Code. There is a very simple rule to avoid that or keep the code clean and maintainable: 10-50-500.
+10: No package can have more than 10 classes.
+50: No method can have more than 50 lines of code.
+500: No class can have more than 500 lines of code.
+SOLID Class Design Principles
+
+SOLID (http://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29) is an acronym for design principles coined by Robert Martin. According to this rule:
+Rule	Description
+Single responsibility principle	A class should have one and only one task/responsibility. If class is performing more than one task, it leads to confusion.
+Open/closed principle	The developers should focus more on extending the software entities rather than modifying them.
+Liskov substitution principle	It should be possible to substitute the derived class with base class.
+Interface segregation principle	It’s like Single Responsibility Principle but applicable to interfaces. Each interface should be responsible for a specific task. The developers should need to implement methods which he/she doesn’t need.
+Dependency inversion principle	Depend upon Abstractions- but not on concretions. This means that each module should be separated from other using an abstract layer which binds them together.
+Usage of Design Patterns
+
+Design patterns help developers to incorporate best Software Design Principles in their software. They also provide common platform for developers across the globe. They provide standard terminology which makes developers to collaborate and easier to communicate to each other.
+Document ideas
+
+Never just start writing code. Strategize, Prepare, Document, Review and Implementation. First of all, jot down your requirements. Prepare a design document. Mention assumptions properly. Get the documents peer reviewed and take a sign off on them.
+Use Equals over ==
+
+== compares object references, it checks to see if the two operands point to the same object (not equivalent objects, the same object).On the other hand, “equals” perform actual comparison of two strings.
+Avoid Floating Point Numbers
+
+Floating point numbers should be used only if they are absolutely necessary. For example, representing Rupees and Paise using Floating Point numbers can be Problematic – BigDecimal should instead be preferred. Floating point numbers are 
+
