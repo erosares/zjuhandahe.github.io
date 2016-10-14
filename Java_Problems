@@ -1,0 +1,2 @@
+1.Math
+  when x=Integer.MINVALUE the Math.abs(x) is negative number, Math.abs(x)==Integer.MINVALUE.
