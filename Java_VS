@@ -1,0 +1,3 @@
+1. Inheritance vs. Composition in Java
+   (1) If there is an IS-A relation, and a class wants to expose all the interface to another class, inheritance is likely to be preferred.
+   (2) If there is a HAS-A relationship, composition is preferred.
