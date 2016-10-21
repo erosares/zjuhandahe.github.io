@@ -1,3 +1,14 @@
 1. Inheritance vs. Composition in Java
+    http://www.programcreek.com/2014/05/inheritance-vs-composition-in-java/
    (1) If there is an IS-A relation, and a class wants to expose all the interface to another class, inheritance is likely to be preferred.
    (2) If there is a HAS-A relationship, composition is preferred.
+
+2. Set vs. Set<?>
+    http://www.programcreek.com/2013/12/raw-type-set-vs-unbounded-wildcard-set/
+
+3. String is passed by “reference” in Java
+    http://www.programcreek.com/2013/09/string-is-passed-by-reference-in-java/
+
+4. HashMap vs. TreeMap vs. Hashtable vs. LinkedHashMap
+    http://www.programcreek.com/2013/03/hashmap-vs-treemap-vs-hashtable-vs-linkedhashmap/
+    
