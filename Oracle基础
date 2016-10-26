@@ -1,0 +1,424 @@
+URL：http://www.2cto.com/database/201610/553139.html
+
+知识点一、PL/SQL
+Procedure Language/SQL是一门编程语言，Oracle公司对SQL进行了扩展，扩展后的SQL，就叫PL/SQL，功能更强大，面向过程语言，模块化编程语言，用于开发基于数据库的应用程序。下面关于PL/SQL编程基础主要介绍两点PL/SQL程序块于PL/SQL语句。
+
+1、PL/SQL程序块
+
+PL/SQL程序的基本单元，按照指定的方式，进行定义的一段程序。
+匿名块
+   不能被其他程序调用
+   可以临时使用
+   匿名块的代码不会存储在数据库中
+命名块
+   触发器
+   存储过程
+   函数
+   包
+   包体
+   有名字的程序块
+   可以重复调用
+   会被编译并存储在数据库中
+子程序
+   命名块
+   有时候特指存储过程和函数
+   
+关于匿名块介绍
+
+语法：  [declare]  --定义部分：定义变量
+       begin  --执行部分：sql语句、pl/sql块 
+       [exception]  --异常处理
+       end;  --块结束标记
+定义部分：用于定义常量、变量、游标、异常、数据类型
+执行部分：实现应用模块功能，包含了要执行的PL/SQL语句和SQL语句
+异常处理：处理执行部分可能出现的运行错误 
+ begin
+     dbms_output.put_line('hello world!');
+ end;
+ PL/SQL中 ';'只表示语句的结束，运行需要输入'/'
+ set serveroutput on; 默认输出关闭，如需输出结果，需要手动设置开启
+ dbms_output  Oracle提供的系统包
+ put_line是dbms_output包下的过程，用于输出字符串信息
+ PL/SQL程序块可以使用Oracle提供的SQL函数
+ 
+ 关于变量和常量介绍
+ 
+ 定义变量或常量语法：
+   变量名 [constant] 数据类型 [not null] [:= | default 表达式]
+   := 赋值运算符
+   constant 表示定义的是常量，必须对它初始化
+   not null 用于指定变量不能为null，声明为not null的变量必须有初始化赋值
+   
+2、PL/SQL编程基础
+
+具有特殊含义的符号
+算术运算符
+   + - * / **(幂运算符)
+ 
+比较（关系）运算符
+    >  >=  <  <=
+    不等于：！=  <>  ^=
+    等于：=
+ 
+is null      is not null
+like
+between...and...
+in()
+ 
+逻辑运算符
+   and  or  not
+ 
+赋值运算符
+   :=
+字符串连接符
+   ||
+ 
+语句终止符
+  ;
+ 
+双引号变量符
+  “变量名”  常用在用关键字定义变量名或变量名含有空格等情况时
+ 
+注释符
+   --单行注释
+   /*
+    *多行注释
+    */
+ 
+范围操作符
+       ..     1..10       1到10
+ 
+属性提示符
+     %        %type       %rowtype
+     
+ 标识符
+ 可用于所有需要起名字的地方
+直接写，要以英文字母开头
+如果不以英文字母开头，要以双引号引起来
+标识符能直接使用的字符大小写英文字母、数字、_ 、$、#，
+如果要包含其他的字符，    则必须用双引号变量符，
+不能直接是oracle关键字，如果是，必须用双引号变量符
+最大长度为30个字符
+
+文本（字面量）
+能直接写的值
+数字文本
+   整数、浮点数、科学计数法 5E6 → 5×10^6、幂操作 5**2 → 5^2
+字符文本
+   用单引号引起来的单个字符
+字符串文本
+   用单引号引起来的两个或两个以上的字符
+   字符串中’‘代表一个普通字符’
+布尔文本
+   true false
+日期时间文本
+   用字符串表示的
+   日期字符串必须符合oracle对时间的默认显示格式‘dd-mon-yy’
+   
+ 块的嵌套
+PL/SQL块可以嵌套，嵌套层次没有限制
+  declare
+    v_name varchar2(30) := '外层块';
+ begin
+    declare
+       v_name varchar2(30) :='内层块';
+    begin
+       dbms_output.put_line(v_name);
+    end;
+    dbms_output.put_line(v_name);
+ end;
+ 
+ 子块：被嵌套的块
+主块：包含子块的块
+变量的作用范围：
+子块可以使用主块定义的任何标识符
+主块不能引用子块的任何标识符
+子块中变量与主块变量同名，则子块中使用的是自己
+
+3、PL/SQL语句
+
+语句必须以;结束
+表达式不是语句，可以作为语句一部分
+赋值语句：变量名 := 值|表达式
+null语句
+null
+空值，表示未知，不存在
+作为一条语句，表示空语句，是一条PL/SQL语句，
+什么都不做 null;
+begin
+null;
+end;
+执行select语句
+在PL/SQL中执行select语句时，必须使用into子句把查询结果赋给变量
+(否则，运行时提示在此 SELECT 语句中缺少 INTO 子句)
+into子句
+作用select语句的查询结果赋给一些变量，用记录类型变量接收值
+一行结果列值的个数必须与用于接收值的变量的个数相同
+查询结果必须且只能返回1行，否则运行时提示返回的行数过多或未找到数据
+
+declare
+              v_id t_class.id%type;
+              v_name t_class.name%type;
+            begin
+              select * into v_id, v_name from t_class;
+              dbms_output.put_line(v_id);
+            end;
+            
+执行DML语句
+PL/SQL中，可以直接使用DML语句、commit、rollback，PL/SQL默认开启了事务
+
+分支语句
+条件表达式的结果的类型必须是boolean
+
+null，Unkown，–> false
+
+if then
+    if 条件表达式 then
+        语句块
+end if;
+
+if then-else
+    if 条件表达式 then
+        语句块1
+else
+    语句块2
+end if;
+
+分支语句代码：
+if then-elsif then-else
+    if 条件表达式1 then
+        语句块1
+    elsif 条件表达式2 then
+        语句块2
+    elsif 条件表达式 then
+        语句块3
+    .
+    .
+    .
+    else
+        语句块
+    end if;
+
+declare
+  is_married boolean;
+begin
+  if is_married then
+    dbms_output.put_line('2 > 1');   
+  elsif false then
+    dbms_output.put_line('3 > 1');
+  else
+    dbms_output.put_line('我是else');
+  end if;
+end;
+
+case.when语句
+case [val]
+    when 表达式1 then
+        语句块1;
+    when 表达式2 then
+        语句块2;
+    .
+    .
+    .
+    [else]
+end case;
+
+当指定了case关键字后的val的时候，表示的是用val与when后的值进行匹配
+当没有指定case关键字后的val的时候，表示的是when后的表达式的结果类型必须为boolean
+case.when语句代码：
+begin
+  case
+    when false then
+      dbms_output.put_line(1);
+    when false then
+      dbms_output.put_line(2);
+    else
+      dbms_output.put_line(3);
+  end case;
+end;
+
+循环语句
+loop
+    基本循环
+    默认循环条件为true
+    loop
+        /*循环体*/
+    end loop;
+    退出循环：结束循环语句的执行
+        exit;直接退出
+        exit when 条件表达式; 有条件退出
+    结束本次循环，继续下一次循环：
+        continue; 直接继续
+        continue when 条件表达式; 有条件继续
+        
+循环代码（1）
+declare
+  v_loop number := 0;
+begin
+  loop     
+    v_loop := v_loop + 1;
+--    if v_loop > 10 then
+      exit when v_loop > 10;
+--    end if;
+    dbms_output.put_line('xxxxxx');
+  end loop;
+end;
+
+循环代码（2）
+declare
+  v_loop number := 0;
+begin
+  loop
+    v_loop := v_loop + 1;
+   if v_loop = 1 then
+      continue;
+    end if;
+--      continue when v_loop = 4;
+        dbms_output.put_line('xxxxxx');
+  end loop;
+end;
+
+for-each增强型for循环
+for
+    for varName in [reverse] 开始值..结束值 
+    loop
+        /*循环体*/
+    end loop;
+varName，Oracle会自动定义，不需要显示定义它
+自动修改循环变量的值
+循环变量的初始值：如果按升序循环，初始值就是指定范围的开始值
+                  如果按降序循环，初始值就是指定范围的结束值
+                  
+增强型for循环代码：
+declare
+ couter number := 5;
+begin
+  for couter  in 10..1
+  loop
+    dbms_output.put_line(couter);
+  end loop;
+end;
+
+while循环
+while 条件表达式 
+loop
+    /*循环体*/
+end loop;
+
+while循环代码：
+declare
+ counter number := 1;
+begin
+  while counter < 10 
+  loop
+    dbms_output.put_line(counter);
+    counter := counter + 3;
+  end loop;
+end;
+
+
+知识点二、游标（cursor）
+
+游标，存放的是指针，指针就是地址，游标是系统为用户分配的一块缓冲区，用于存放select语句的执行结果，游标作用：用于对查询语句返回的多条(0、1、多条)进行处理，利用游标可以从结果集中每次提取一条记录，关于游标存在游标变量、显示游标、定义显示游标等很多知识点，再次知识简单介绍一下。
+
+定义显示游标
+   cursor 游标名 is select语句
+   select语句不执行
+ 
+打开游标：
+   open 游标名;
+   分配一块空间，执行select语句，把查询结果集放到分配的中
+   同时把这块空间的地址保存在游标中
+ 
+从游标中取数据：
+   fetch 游标名 into var1,....|record
+   从游标中存放的地址对应的内存空间中取数据
+   一次取一行，每取一次之后，游标指针会自动移动到下一行
+ 
+关闭游标：
+   close 游标名;
+   游标用完后，要关闭，未关闭的游标会占用内存，耗费系统资源
+   关了之后，就不可以再使用，否则无效的游标
+ 
+显示游标的属性：
+   %found 最近一次取数据(fetch)，有没有取到数据，取到则值为true，没有取到值false
+   %notfound
+   %isopen判断游标是否打开
+   %rowcount 用于记录当前从游标中已经取的记录个数
+ 
+使用游标步骤（较为麻烦，一般不适用下面这种方式，有简单的方式，下面会介绍）：
+       打开游标
+       从游标中取数据
+       开始循环
+       处理从游标取得数据
+       退出循环
+       关闭游标
+       
+ 游标for循环
+ 忽略了显示的打开游标、关闭游标、从游标中取数据
+for 记录变量名 in 游标名
+loop
+    /*循环体*/
+end loop;
+记录变量名,该变量不需要显示定义，记录类型，结构与查询结果相同
+
+例：为每个员工的名字统一加后缀 _emp
+方法一：
+declare
+   cursor mycursor is select * from emp;
+begin
+   for emp_record in mycursor
+   loop
+      update emp set ename = emp_record.ename || '_emp' where empno = emp_record.empno;
+   end loop;
+   commit;
+end;
+
+方法二：
+declare
+     cursor mycursor is select * from emp;
+     emp_record emp%rowtype;
+  begin
+     open mycursor;
+     loop
+        fetch mycursor into emp_record;
+        if mycursor%found then
+           update emp set ename = emp_record.ename || '_emp' where empno = emp_record.empno;
+        else
+           exit;
+     end loop;
+     close mycursor;
+     commit;
+  end;
+  
+  
+  知识点三、异常
+
+在这里只是简单说明一下数据库中异常的常识，用的异常的地方还需要查找资料。
+异常的组成部分：
+    ORA-01476: 除数为 0
+    01476      错误编号
+    除数为 0， 错误信息
+    ZERO_DIVDE 错误名
+预定义异常：
+    no_date_found   01403   select未查到数据
+    too_many_rows   01422   返回的结果查过一行
+    ZERO_DIVDE      01476   除数为0
+    value_error         数据超出变量长度
+    cursor_already_open    游标已经打开
+    invalid_cursor      在不合法的游标上进行了操作
+    invalid_number      字符串转换为数字错误
+异常处理部分
+    exception
+        when 异常名 then 异常处理
+        .
+        .
+        .
+        when others then 其他异常处理
+    预定义函数
+        sqlcode 返回错误代码
+        sqlerrm  返回错误消息
+自定义异常
+    异常名字 exception;
+    pragma exception_init(异常名字,oracle_error_number)
+    oracle_error_number:-20000~-20999
