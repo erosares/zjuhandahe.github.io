@@ -1,0 +1,100 @@
+Function RowSplit(SourceFileName, DestFileName)
+Dim intSourceIndex
+Dim intSourceRowNO
+Dim ForNumber
+Dim intDestIndex
+Dim xlApp
+Const intSplitNO = 10000 'rowNums--------
+
+ 'Create Excel Object----------
+ Set xlApp = CreateObject("EXCEL.APPLICATION")
+
+ 'Open excel
+    xlApp.Workbooks.Open SourceFileName
+    intSourceIndex = xlApp.Workbooks.Count
+    xlApp.Workbooks(intSourceIndex).Sheets(1).Select
+   
+ 'get row number----------
+ intSourceRowNO = xlApp.ActiveSheet.UsedRange.Rows.Count
+
+    'calculate loop times
+    If (intSourceRowNO - 1) / intSplitNO = (intSourceRowNO - 1) \ intSplitNO Then
+        ForNumber = (intSourceRowNO - 1) \ intSplitNO
+    Else
+        ForNumber = (intSourceRowNO - 1) \ intSplitNO + 1
+    End If
+
+    'tell split---------
+ If ForNumber < 2 Then
+        RowSplit = False
+        Exit Function
+    End If
+   
+    MsgBox "data number grater than " & intSplitNO * 2 & "row，according to " & intSplitNO & "to split one file"
+
+ 'start split------------
+    For i = 1 To ForNumber
+  'cope header------------
+        xlApp.Rows("1:1").Select
+        xlApp.Selection.Copy
+        xlApp.Workbooks.Add
+        intDestIndex = xlApp.Workbooks.Count
+        xlApp.Range("A1").Select
+        xlApp.ActiveSheet.Paste
+  'cope data----------
+  xlApp.Workbooks(intSourceIndex).Activate
+        xlApp.Rows((i - 1) * intSplitNO + 2 & ":" & i * intSplitNO + 1).Select
+        xlApp.Selection.Copy
+        xlApp.Workbooks(intDestIndex).Activate
+        xlApp.Range("A2").Select
+        xlApp.ActiveSheet.Paste
+  'close Excel auto remind-------------
+        xlApp.DisplayAlerts = False
+  'delete new file's two empty Sheet------------
+        xlApp.Workbooks(intDestIndex).Sheets(2).Delete
+        xlApp.Workbooks(intDestIndex).Sheets(2).Delete
+  'open Excel remind---------
+        xlApp.DisplayAlerts = True
+        xlApp.Range("A1").Select
+  'store data----------
+        xlApp.ActiveWorkbook.SaveAs Left(DestFileName, Len(DestFileName) - 4) & i & Right(DestFileName, 4)
+  'close saved file-----------
+        xlApp.ActiveWindow.Close
+    Next
+ 'close origional file
+    xlApp.Workbooks(intSourceIndex).Close
+
+ 'close and clean up excel object------------
+ xlApp.Quit
+ Set xlApp = Nothing
+
+    'return success---------
+ RowSplit = True
+
+End Function
+
+
+Sub SplitAll()
+    Dim strSourceFilename
+    Dim strDestFilename
+
+    'create Excel object
+ Set xlApp = CreateObject("EXCEL.APPLICATION")
+ 
+ 'select file needed to split------------
+ strSourceFilename = xlApp.GetOpenFilename
+    strDestFilename = strSourceFilename
+'    strDestFilename = xlApp.GetSaveAsFilename
+   
+    'selected and start do---------
+ If strSourceFilename <> "False" And strDestFilename <> "False" Then
+        If RowSplit(strSourceFilename, strDestFilename) Then
+   MsgBox "successful"
+  Else
+   MsgBox "failed"
+  End If
+    End If
+ 'close and clean up excel object
+ xlApp.Quit
+ Set xlApp = Nothing
+End Sub
