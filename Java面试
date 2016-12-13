@@ -1,0 +1,38 @@
+1. 九种基本数据类型的大小，以及他们的封装类。
+   boolean, byte, char, short,  int, long, float, double, void
+   Boolean, Byte, Character, Short, Integer, Long, Float, Double, Void
+2. Switch能否用string做参数？
+   可以，但是需要在jdk1.7(java7)之后的版本中。只有浮点数（float/Double）是不行.
+3. equals与==的区别。
+   ==操作比较的是两个变量的值是否相等，对于引用型变量表示的是两个变量在堆中存储的地址是否相同，即栈中的内容是否相同。       
+   equals操作表示的两个变量是否是对同一个对象的引用，即堆中的内容是否相同。
+4. Object有哪些公用方法？
+   getClass(), hashCode(), equals(Object obj), clone(), toString(), notify(), notifyAll(), wait(long timeout), wait(long timeout, 
+   int nanos), wait()
+5. Java的四种引用，强弱软虚，用到的场景。
+   强引用: 垃圾回收器绝不会回收它.
+   软引用: 内存空间足够，垃圾回收器就不会回收它，如果内存空间不足了，就会回收这些对象的内存.      软引用可用来实现内存敏感的高速缓存。
+   弱引用: 一旦发现了只具有弱引用的对象，不管当前内存空间足够与否，都会回收它的内存
+   幽灵引用(虚引用) : 发现它还有虚引用，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。程序可以通过判断引用队列中是否已经加入了虚引用，
+       来了解被引用的对象是否将要被垃圾回收。如果程序发现某个虚引用已经被加入到引用队列，那么就可以在所引用的对象的内存被回收之前采取必要的行动。
+6. Hashcode的作用。
+   hashCode是用于查找使用的，而equals是用于比较两个对象的是否相等的。
+   (两个对象的hashCode相同，并不一定表示两个对象就相同，也就是不一定适用于equals(java.lang.Object) 方法，只能够说明这两个对象在散列存储结构中，
+   如Hashtable，他们“存放在同一个篮子里”)
+7. ArrayList、LinkedList、Vector的区别。
+   线程安全性: Vector、Stack：线程安全     ArrayList、LinkedList：非线程安全
+   实现方式: LinkedList：双向链表   ArrayList，Vector，Stack：数组
+   容量扩展方面: 由于ArrayList和Vector（Stack继承自Vector，只在Vector的基础上添加了几个Stack相关的方法，故之后不再对Stack做特别的说明）使用数组
+               实现，当数组长度不够时，其内部会创建一个更大的数组，然后将原数组中的数据拷贝至新数组中
+   效率方面: 查询, 插入, 修改, 删除
+8. String、StringBuffer与StringBuilder的区别。
+   String：字符串常量，字符串长度不可变。Java中String是immutable（不可变）的。
+   StringBuffer：字符串变量（Synchronized，即线程安全）。如果要频繁对字符串内容进行修改，出于效率考虑最好使用StringBuffer，如果想转成String类型，
+                可以调用StringBuffer的toString()方法。
+   StringBuilder：字符串变量（非线程安全）。在内部，StringBuilder对象被当作是一个包含字符序列的变长数组。
+9. Map、Set、List、Queue、Stack的特点与用法。
+10. HashMap和HashTable的区别。
+    HashMap是Hashtable的轻量级实现（非线程安全的实现），他们都完成了Map接口，
+    主要区别在于HashMap允许空（null）键值（key）,由于非线程安全，效率上可能高于Hashtable。
+11. HashMap和ConcurrentHashMap的区别，HashMap的底层源码。
+    
