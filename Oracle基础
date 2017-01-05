@@ -422,3 +422,15 @@ declare
     异常名字 exception;
     pragma exception_init(异常名字,oracle_error_number)
     oracle_error_number:-20000~-20999
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    杂：
+    1. 默认的临时表空间：Oracle使用默认的临时表空间作为诸多活动的辅助功工作空间，其中包括排序。
+    2. Undo空间：在事务保存（提交）或者放弃（回滚）之前，Oracle在其Undo表空间中保留一份已经改变行的副本。
