@@ -434,3 +434,13 @@ declare
     杂：
     1. 默认的临时表空间：Oracle使用默认的临时表空间作为诸多活动的辅助功工作空间，其中包括排序。
     2. Undo空间：在事务保存（提交）或者放弃（回滚）之前，Oracle在其Undo表空间中保留一份已经改变行的副本。
+    3. SQL组成：DDL（create, alter, drop, grant, truncate, revoke, analyze...），DML（select, insert, update, delete），
+    4. 并行处理的配置：默认情况下DDL和查询命令是可以并行处理的，但是DML（如insert, update, delete, merge）命令不能并行处理。如果希望以并行的方式
+       执行DML命令，必须在运行命令的会话之前执行以下命令：alter session enable parallel dml;
+    
+    
+    
+    
+    
+    
+    
