@@ -1,5 +1,5 @@
 static含义： 全局或者静态的意思。
-static修饰内容：修饰变量、方法；静态代码块；静态内部类；静态导包。
+static修饰内容：修饰成员变量、成员方法；静态代码块；静态内部类；静态导包。
                静态内部类和非静态内部类初始化：
                     JavaVMStackSOF.NoneStaticClass noneStaticClass = javaVMStackSOF.new NoneStaticClass();//非静态
                     JavaVMStackSOF.StaticClass staticClass = new JavaVMStackSOF.StaticClass();//静态
