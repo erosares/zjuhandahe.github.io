@@ -1,0 +1,7 @@
+四种访问权限：public > protect > default(默认) > private。
+public可供所有类访问
+protect：本包内(package)可见，包外不可见 ；
+         继承可见
+默认：相当于C++里面friendly，包内也可见，包外不可见；
+     继承不可见
+private只允许本类可见，其他均不可见。
