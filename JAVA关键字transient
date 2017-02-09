@@ -1,1 +1,4 @@
+URL: http://www.importnew.com/12611.html
 
+transient修饰成员变量，表示该类在序列化的时候，该成员变量不会被序列化。（例如InputStream这样的变量不能被序列化，因为其之前就没有实现serializable接口）
+关于序列化十六进制文件解读文档：URL    http://www.javaworld.com/article/2072752/the-java-serialization-algorithm-revealed.html
