@@ -1,0 +1,37 @@
+代码：
+   public class ForEach
+    {
+        List<String> list;
+        public void display1()
+        {
+            for (String s : list)
+            {
+                System.out.println(s);
+            }
+        }
+    }
+    
+字节码：
+  // Method descriptor #10 ()V		/*V代表返回值是void*/
+// Stack: 2, Locals: 3				/*操作数栈需要2个slot，局部变量表需要3个slot*/
+public void display1();
+   0  aload_0 [this]				/*将this指针推至栈顶*/
+   1  getfield ambigous.ForEach.list : java.util.List [19]	/*获得域List对象，压入栈顶*/
+   4  invokeinterface java.util.List.iterator() : java.util.Iterator [21] [nargs: 1]	/*调用interface的iterator方法获得iterator对象*/
+   9  astore_2						/*将其存到局部变量表的第三个slot中（此时第一个是this，第二个空）*/
+  10  goto 30						/*跳转*/
+  13  aload_2						/*将iterator对象推到栈顶*/
+  14  invokeinterface java.util.Iterator.next() : java.lang.Object [27] [nargs: 1]	/*调用iterator的next方法*/
+  19  checkcast java.lang.String [33]/*checkcast类型安全检查*/
+  22  astore_1 [s]					/*将s存到第二块slot*/
+  23  getstatic java.lang.System.out : java.io.PrintStream [35]	/*获取静态System.out对象*/
+  26  aload_1 [s]					/*将s推到栈顶*/
+  27  invokevirtual java.io.PrintStream.println(java.lang.String) : void [41]	/*调用out.println方法*/
+  30  aload_2						/*将iterator对象推到栈顶*/
+  31  invokeinterface java.util.Iterator.hasNext() : boolean [47] [nargs: 1]	/*调用iterator.hasNext方法*/
+  36  ifne 13						/*如果结果非0，即true，跳转*/
+  39  return						/*返回*/
+  
+  
+  foreach的执行最终转换成了对iterator的调用，因为List等都实现了iteratoe接口。
+  
