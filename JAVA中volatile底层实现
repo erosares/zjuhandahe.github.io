@@ -21,3 +21,9 @@ Lock前缀指令会引起处理器缓存回写到内存。缓存一致性机制�
 
 http://cache.baiducontent.com/c?m=9d78d513d99b12eb0bfa940f4c5d8b374314dd3f679f874368d5e35fe3174c303171e2cb637f4e57959e223015e80902e5aa7034751421c486d5cd0f98ac925f7ed4776a2d49c75612a448f2945b7f9262c801b5b25bfabdf63993a4d8d1c8542490155a24&p=882a9e428e9a59fc57ef8e0c4940&newp=8b2a975bce910aff57e69364524092695d0fc20e3cd7d001298ffe0cc4241a1a1a3aecbf26281003d1c07c6601af4a5aebfa3076310034f1f689df08d2ecce7e3190757f&user=baidu&fm=sc&query=java+synchronized%BA%CDvolatile&qid=ee964a0400011d73&p1=1
 volatile是非原子性的，所以仅靠volatile是不能保证线程安全性的；volatile关键字修饰的变量不会被指令重排序优化。
+
+volatile和synochnized区别：
+   1、volatile轻量级，只能修饰变量。synchronized重量级，还可修饰方法。
+   2、volatile只能保证数据的可见性，不能用来同步，因为多个线程并发访问volatile修饰的变量不会阻塞。
+      synchronized不仅保证可见性，而且还保证原子性，因为，只有获得了锁的线程才能进入临界区，从而保证临界区中的所有语句都全部执行。多个线程争抢
+          synchronized锁对象时，会出现阻塞。
