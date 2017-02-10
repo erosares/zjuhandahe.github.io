@@ -1,2 +1,6 @@
 成员变量：
     private final char value[];   //实际上String就是字符数组
+
+成员方法：
+   public int hashCode(){...}   //hash计算公式为：s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]  
+   匹配和分割字符串的方法均调用的是Pattern类下的方法实现。
