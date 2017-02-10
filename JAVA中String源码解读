@@ -1,1 +1,2 @@
-
+成员变量：
+    private final char value[];   //实际上String就是字符数组
