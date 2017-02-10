@@ -7,3 +7,8 @@ HashMap实质上是数组和单链表结合体，数组存放key，单链表存�
        2、当不同的对象hashCode发生碰撞时，HashMap通过单链表解决问题，将新元素加入链表表头，通过next指向原有的元素。单链表在java中的实现就是对象的引用
          （复用）。
 HashMap中的容量必须是2的幂，因为只有是2的幂，对length取余才能转化为对（length-1）的与操作。
+在多线程中使用HashMap：
+       1、在外部包装HashMap，实现同步机制；
+       2、使用Map m=Collections.synchronizedMap(new HashMap(...))，这里对HashMap做了一次包装；
+       3、使用java.util.HashTable；
+       4、使用java.util.concurrent.ConcurrentHashMap，相对安全，效率更高。
