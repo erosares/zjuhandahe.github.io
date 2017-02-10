@@ -1,6 +1,6 @@
 线程的工作原理：JVM有一个mian memory，而每个线程有自己的working memory，一个线程对一个variable进行操作时，都要在自己的woring memory里面建立一个copy，
     操作之后再写入main memory。多个线程操作同一个variable，就可能出现不可预知的结果。
 得到相应的场景：用synchonized的关键字建立一个monitor，这个monitor可以是要修改的variable，也可以是object或者method，然后通过给这个monitor加锁，来实现
-    线程安全，每个线程在获得这个锁之后，要执行完 load到woring memory -->  user&assign --> store到main memory的过程，才会释放它的锁，这样就实现了线程
+    线程安全，每个线程在获得这个锁之后，要执行完 load到woring memory -->  use&assign --> store到main memory的过程，才会释放它的锁，这样就实现了线程
     安全。
        
