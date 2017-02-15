@@ -13,3 +13,6 @@ HashMap中的容量必须是2的幂，因为只有是2的幂，对length取余�
        2、使用Map m=Collections.synchronizedMap(new HashMap(...))，这里对HashMap做了一次包装；
        3、使用java.util.HashTable；
        4、使用java.util.concurrent.ConcurrentHashMap，相对安全，效率更高。
+
+URL: http://firezhfox.iteye.com/blog/2241043
+http://www.importnew.com/21396.html
