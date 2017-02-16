@@ -4,3 +4,6 @@
     线程安全，每个线程在获得这个锁之后，要执行完 load到woring memory -->  use&assign --> store到main memory的过程，才会释放它的锁，这样就实现了线程
     安全。
        
+
+
+URL:http://www.importnew.com/22945.html
