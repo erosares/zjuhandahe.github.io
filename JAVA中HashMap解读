@@ -1,4 +1,4 @@
-URL：http://ydlmlh.iteye.com/blog/2220722
+一：URL：http://ydlmlh.iteye.com/blog/2220722
 HashMap中有两个影响其性能：初始容量和加载因子。默认的初始容量是16，加载因子是0.75。
        容量是哈希表中桶(Entry数组)的数量，初始容量只是哈希表在创建时的容量。加载因子是哈希表在其容量自动增加之前可以达到多满的一种尺度。当哈希表中的
            条目数超出了加载因子与当前容量的乘积时，通过调用 rehash 方法将容量翻倍。
@@ -17,7 +17,7 @@ HashMap中的容量必须是2的幂，因为只有是2的幂，对length取余�
 URL: http://firezhfox.iteye.com/blog/2241043
 http://www.importnew.com/21396.html
 
-HashMap线程不安全的体现：
+二：HashMap线程不安全的体现：
        URL：http://www.importnew.com/22011.html
        1、resize死循环
           resize()-->transfer()
@@ -46,3 +46,9 @@ HashMap线程不安全的体现：
 
     经过这几步，我们会发现转移的时候是逆序的。假如转移前链表顺序是1->2->3，那么转移后就会变成3->2->1。这时候就有点头绪了，死锁问题不就是因为1->2的
         同时2->1造成的吗？所以，HashMap 的死锁问题就出在这个transfer()函数上。
+        
+        
+ 三：JDK7与JDK8中HashMap的实现
+     URL:http://www.importnew.com/23164.html
+     JDK7中HashMap采用的是位桶+链表的方式，即我们常说的散列链表的方式，而JDK8中采用的是位桶+链表/红黑树的方式，也是非线程安全的。当某个位桶的链表的
+         长度达到某个阀值的时候，这个链表就将转换成红黑树。
