@@ -16,3 +16,33 @@ HashMap中的容量必须是2的幂，因为只有是2的幂，对length取余�
 
 URL: http://firezhfox.iteye.com/blog/2241043
 http://www.importnew.com/21396.html
+
+HashMap线程不安全的体现：
+       URL：http://www.importnew.com/22011.html
+       1、resize死循环
+          resize()-->transfer()
+          --transFor代码
+          void transfer(Entry[] newTable, boolean rehash) {
+            int newCapacity = newTable.length;
+            for (Entry<K,V> e : table) {
+                while(null != e) {
+                    Entry<K,V> next = e.next;
+                    if (rehash) {
+                        e.hash = null == e.key ? 0 : hash(e.key);
+                    }
+                    int i = indexFor(e.hash, newCapacity);
+                    e.next = newTable[i];
+                    newTable[i] = e;
+                    e = next;
+                 }
+            }
+            }
+          简单解读transfer代码：
+          
+    对索引数组中的元素遍历
+    对链表上的每一个节点遍历：用 next 取得要转移那个元素的下一个，将 e 转移到新 Hash 表的头部，使用头插法插入节点。
+    循环2，直到链表节点全部转移
+    循环1，直到所有索引数组全部转移
+
+    经过这几步，我们会发现转移的时候是逆序的。假如转移前链表顺序是1->2->3，那么转移后就会变成3->2->1。这时候就有点头绪了，死锁问题不就是因为1->2的
+        同时2->1造成的吗？所以，HashMap 的死锁问题就出在这个transfer()函数上。
