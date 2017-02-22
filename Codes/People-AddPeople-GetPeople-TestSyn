@@ -1,1 +1,125 @@
+package com.statestr.hanson.threadsyn;
+
+public class People {
+	private String name;
+	private String sex;
+	public boolean flag = true;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+}
+
+
+
+package com.statestr.hanson.threadsyn;
+
+public class AddPeople implements Runnable {
+	private People people;
+
+	public AddPeople(People people) {
+		this.people = people;
+	}
+
+	@Override
+	public void run() {
+		int i = 0;
+		while (true) {
+			synchronized (people) {
+				if (people.flag) {
+					if (i == 0) {
+						people.setName("nan");
+						people.setSex("nan");
+					} else {
+						people.setName("nv");
+						people.setSex("nv");
+					}
+					people.flag = false;
+					people.notify();
+				} else {
+					try {
+						people.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+
+			i = (++i) % 2;
+		}
+	}
+}
+
+
+
+
+package com.statestr.hanson.threadsyn;
+
+public class GetPeople implements Runnable {
+	private People people;
+
+	public GetPeople(People people) {
+		this.people = people;
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			synchronized (people) {
+				if(!people.flag){
+					System.out.println("name: " + people.getName() + "-------"
+						+ "sex: " + people.getSex());
+					people.flag = true;
+					people.notify();
+				}else {
+					try {
+						people.wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+			}
+
+		}
+
+	}
+
+}
+
+
+package com.statestr.hanson.threadsyn;
+
+public class TestSyn {
+
+	/**
+	 * @param args
+	 * @throws InterruptedException 
+	 */
+	public static void main(String[] args) throws InterruptedException {
+		People people = new People();
+		AddPeople addPeople = new AddPeople(people);
+		GetPeople getPeople = new GetPeople(people);
+		Thread t1 = new Thread(addPeople);
+		Thread t2 = new Thread(getPeople);
+		t1.start();
+		t2.start();
+	}
+
+}
 
