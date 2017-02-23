@@ -38,6 +38,20 @@
             CONSTANT_Fiedref_info、CONSTANT_Methodref.info、CONSTANT_InterfaceMethonref_info、CONSTANT_MethodType_info、
             CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType.info、CONSTANT_MethodHandle_info和CONSTANT_InvokeDynamic_info7种常量类型
          1. 类或接口的解析；2. 字段解析； 3. 类方法解析；4. 接口方法解析。
+    （5）初始化
+         类初始化阶段是类加载过程的最后一步。
+         变量在初始化阶才根据程序员设定的值去初始化变量。
+         1. 类和类加载器
+            比较两个类是否“相等”，必须被相同的类加载器加载才有意义；
+         2. 双亲委派模型
+                                                        启动类加载器
+                                                        扩展类加载器
+                                                      应用程序类加载器
+                                               自定义类加载器    自定义类加载器
+           图中展示的类加载其之间的层次关系，称为类加载其的双亲委派模型。双亲委派模型要求除了顶层的启动类加载器外，其余的类加载器都应当有自己的父类
+               加载器。这里的父类加载器之间的父子关系一般不会以继承的关系来实现，而是都使用组合关系来复用父加载的代码。
+                                                   
+         
               
            
           
