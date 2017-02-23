@@ -28,9 +28,16 @@
          4. 符号引用验证：
             最后一个阶段的校验发生在虚拟机将符号引用转化为直接引用的时候；
             符号引用验证的目的是确保动作能正常运行，如果无法通过符号引用验证，那么将会抛出一个java.lang.IncompatibleClassChangeError异常的子类。
-      （3）准备
-           准备阶段是正式为类变量分配内存并设置类变量初始值的阶段，这些变量所使用的内存都将在方法区中进行分配。
-           类变量为被static修饰的变量。    变量被设置初始值，而不是代码中写的值。
-      （4）解析
+    （3）准备
+         准备阶段是正式为类变量分配内存并设置类变量初始值的阶段，这些变量所使用的内存都将在方法区中进行分配。
+         类变量为被static修饰的变量。    变量被设置初始值，而不是代码中写的值。
+    （4）解析
+         解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程。（符号引用以一组符号来描述所引用的目标；直接引用可以是直接指向目标的指针、相对偏
+            移量或是一个能间接定位到目标的句柄。
+         解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符7类符号引用进行，分别对应于常量池CONSTANT_CLASS_info、
+            CONSTANT_Fiedref_info、CONSTANT_Methodref.info、CONSTANT_InterfaceMethonref_info、CONSTANT_MethodType_info、
+            CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType.info、CONSTANT_MethodHandle_info和CONSTANT_InvokeDynamic_info7种常量类型
+         1. 类或接口的解析；2. 字段解析； 3. 类方法解析；4. 接口方法解析。
+              
            
           
