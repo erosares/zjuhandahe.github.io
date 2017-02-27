@@ -1,0 +1,22 @@
+public static void main(String[] args){}
+         在java中，main()函数是java应用程序的入口方法。java虚拟机通过main方法找到需要启动的运行程序，并且检查mian函数所在类是否被java虚拟机装载。如果没有装载，那么就装载
+该类，并且装载所有相关的其他类。因此程序在运行的时候，第一个执行的方法就是main()方法。通常情况下，如果要运行一个类的方法，必须首先实例化这个类的一个对象，
+然后通过“对象名.方法名()”的方式来运行方法，但是因为mian是程序的入口，这时候没有实例化对象，因此将mian方法声明为static，这样这个方法就可以直接通过“类名.方法名()”
+的方式来 调用。
+
+
+实例：虚拟机通过调用某个类的main方法启动，传递给mian一个字符串数组参数，使指定类被加载，同时链接该类所使用的其他的类型，并且初始化他们。例如对于程序：
+public class HelloApp {
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
+        for (int i = 0; i < args.length; i++) {
+            System.out.println(args);
+        }
+    }
+}
+编译后在命令行模式下键入： java HelloApp run virtual machine
+         将通过调用HelloApp的方法main来启动java虚拟机，传递给mian一个包含三个字符串“run”、“virtual”、“machine”的数组。现在我们略述虚拟机在执行HelloApp时可能采取的步骤。
+         开始试图执行类HelloApp的mian方法，发现该类并没有被装载，也就是说虚拟机当前不包含该类的二进制代码，于是虚拟机使用ClassLoader试图寻找这样的二进制代码。如果这个
+进程失败，则抛出一个异常。类被装载后同时在main方法被调用之前，必须对类HelloApp与其他类进行链接，然后初始化。链接包括三个阶段：检验，准备和解析。检验检查装载
+的主类的符号和语义，准备则创建类或接口的静态域，以及把这些域初始化为标准的默认值，解析负责检查主类对其他类或接口的符号引用，在这一步它是可选的。类的初始化
+是对类中声明的静态初始化函数和静态域的初始化构造方法的执行。一个类在初始化之前，它的父类必须被初始化。
