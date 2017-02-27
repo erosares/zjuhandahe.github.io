@@ -1,0 +1,155 @@
+package com.statestr.hanson.myreentrantlock;
+
+public class Constants {
+	public static final int MAX_BUFFER_SIZE = 10;
+	public static final int NUM_OF_PRODUCER = 2;
+	public static final int NUM_OF_CONSUMER = 3;
+}
+
+
+package com.statestr.hanson.myreentrantlock;
+
+import java.util.UUID;
+
+public class Task {
+	private String id;
+
+	public Task() {
+		id = UUID.randomUUID().toString();
+	}
+
+	public String toString() {
+		return "Task[" + id + "]";
+	}
+}
+
+
+
+package com.statestr.hanson.myreentrantlock;
+
+import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+
+public class Producer implements Runnable {
+
+	private List<Task> tasks;
+	private Lock lock;
+	private Condition condition_pro;
+	private Condition condition_con;
+
+	public Producer(List<Task> tasks, Lock lock, Condition condition_pro,
+			Condition condition_con) {
+		this.tasks = tasks;
+		this.lock = lock;
+		this.condition_pro = condition_pro;
+		this.condition_con = condition_con;
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			lock.lock();
+			try {
+				while (tasks.size() >= Constants.MAX_BUFFER_SIZE) {
+					try {
+						condition_pro.await();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				Task task = new Task();
+				tasks.add(task);
+				condition_con.signal();
+				System.out.println("Producer["
+						+ Thread.currentThread().getName() + "] put " + task);
+			} finally {
+				lock.unlock();
+			}
+
+		}
+
+	}
+
+}
+
+
+
+package com.statestr.hanson.myreentrantlock;
+
+import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+
+public class Consumer implements Runnable {
+	private List<Task> tasks;
+	private Lock lock;
+	private Condition condition_pro;
+	private Condition condition_con;
+
+	public Consumer(List<Task> tasks, Lock lock, Condition condition_pro,
+			Condition condition_con) {
+		this.tasks = tasks;
+		this.lock = lock;
+		this.condition_pro = condition_pro;
+		this.condition_con = condition_con;
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			lock.lock();
+			try {
+				while (tasks.isEmpty()) {
+					try {
+						condition_con.await();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				Task task = tasks.remove(0);
+				condition_pro.signal();
+				System.out.println("Consumer["
+						+ Thread.currentThread().getName() + "] got " + task);
+			} finally {
+				lock.unlock();
+			}
+
+		}
+	}
+
+}
+
+
+
+package com.statestr.hanson.myreentrantlock;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class TestWaitNotify {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		List<Task> tasks = new ArrayList<Task>(Constants.MAX_BUFFER_SIZE);
+		Lock lock = new ReentrantLock();
+		Condition condition_pro = lock.newCondition();
+		Condition condition_con = lock.newCondition();
+		ExecutorService es = Executors
+				.newFixedThreadPool(Constants.NUM_OF_CONSUMER
+						+ Constants.NUM_OF_PRODUCER);
+		for (int i = 0; i < Constants.NUM_OF_PRODUCER; i++) {
+			es.execute(new Producer(tasks, lock, condition_pro, condition_con));
+		}
+		for (int i = 0; i < Constants.NUM_OF_CONSUMER; i++) {
+			es.execute(new Consumer(tasks, lock, condition_pro, condition_con));
+		}
+	}
+}
