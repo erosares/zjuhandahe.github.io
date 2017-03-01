@@ -1,1 +1,9 @@
-
+URL: http://zl198751.iteye.com/blog/1848575
+一、CAS
+   CAS: Compare and Swap, 比较并交换
+   java.util.concurrent包借助CAS实现了区别于synchronized同步锁的一种乐观锁。
+   
+二：CAS应用
+   CAS有3个操作数，内存值V，旧的预期值A，要修改的新值B。当且仅当预期值A和内存值V相同时，将内存值V修改为B，否则什麽都不做。
+  
+ 
