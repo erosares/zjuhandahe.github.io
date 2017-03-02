@@ -59,8 +59,32 @@
                Object类在程序的各种类加载器环境中都是同一个类.相反.如果没有使用双亲委派模型.由各个类加载器自行去加载的话.如果用户编写了一个称为
                “java.lang.Object”的类.并存放在程序的ClassPath中.那系统中将会出现多个不同的Object类.java类型体系中最基础的行为也就无法保证.应用
                程序也将会一片混乱.
-                                                   
-         
+三、深入理解
+    1、在ClassLoader的方法中，表示类名称的name参数的值是类的二进制名称。需要注意的是内部类的表示，如com.example/Sample$1和
+       com.example.Sample$Inner等表示方式。
+    2、虚拟机如何判定两个Java类是相同的？
+       Java虚拟机不仅看类的全名是否相同，还要看加载此类的泪加载器是否一样。
+    3、在Java虚拟机判断两个类是否相同的时候，使用的是类的定义加载器。也就是说，哪个类加载其启动类的家在过程并不重要，重要的是最终定义这个类的加载器。
+       两种类加载其的关联之处在于：一个类的定义加载器是它引用的其他类的初始化加载器。如类com.example.Outer引用了类com.example.Inner，则由类
+       com.example.Outer的定义加载器负责启动类com.example.Inner的加载过程。
+       方法loadClass()抛出的异常时java.lang.ClassNotFoundException异常；方法defineClass()抛出的是java.lang.NoClassDefFoundError异常。
+    4、Class.forName
+       Class.forName是一个静态方法，同样可以用于加载类。
+       Class.forName的一个很常见的用法是在加载数据库驱动的时候。如Class.forName(""org.apache.derby.jdbc.EmbeddedDriver").newInstance()用来加载
+             Apache Derby 数据库的驱动。
+    5、自己的类加载器
+       一般来说，自己开发的类加载器只需要覆写findClass(String name)方法即可。java.lang.ClassLoader类的方法loadClass()封装了前面提到的代理模式的
+           实现。该方法会首先调用findLoadedClass()方法来检查该类是否已经被加载过；如果没有加载过的话，会调用父类加载器的loadClass()方法来尝试加载；
+           如果父类加载器无法加载该类的话，就调用findClass()方法来查找该类。因此，为了保证类加载器都正确实现代理模式，在开发自己的类加载器时，最好不
+           要覆写loadClass()方法，而是覆写findClass()方法。
+    6、类加载器与Web容器
+       以Apache Tomcat来说，每个Web应用都有一个对应的类加载器实例。该类加载器也使用代理模式，所不同的是它是首先尝试去加载某个类，如果找不到再代理给
+          父类加载器。这与一般类加载器的顺序是相反的。这是Java Servlet规范中的推荐做法，其目的是使得Web应用自己的类的优先级高于Web容器提供的类。这
+          中代理模式有一个例外：Java核心库的类是不在查找范围之内的。这也是为了保证Java核心库的类形安全。
+       绝大多数情况下，Web应用的开发人员不需要考虑与类加载器相关的细节。下面给出几条简单的规则：
+          （1）每个Web应用自己的Java类文件和使用的库的jar包，分别放在WEB-INF/classes和WEB-INF/lib目录下面。
+          （2）多个应用共享的Java类文件和jar包，分别放在Web容器指定的由所有Web应用共享的目录下面。
+          （3）当出现找不到类的错误时，检查当前类的类加载器和当前线程的上下文加载器是否正确。
               
 
 ---------------------------------------------------------------------------------------------------------------------------------------
