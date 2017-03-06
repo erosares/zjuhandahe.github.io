@@ -1,0 +1,46 @@
+Description:
+  Given a picture consisting of black and white pixels, find the number of black lonely pixels.
+  The picture is represented by a 2D char array consisting of 'B' and 'W', which means black and white pixels respectively.
+  A black lonely pixel is character 'B' that located at a specific position where the same row and same column don't have any other black 
+    pixels.
+    
+Example:
+ Input: 
+[['W', 'W', 'B'],
+ ['W', 'B', 'W'],
+ ['B', 'W', 'W']]
+
+Output: 3
+Explanation: All the three 'B's are black lonely pixels.
+
+
+---------------------------------------------------------MY------------------------------------------------------
+Analysis:
+  遍历数组，分别找出每行存在'B'的个数，和每列存在'B'的个数，存放在两个数组rowBs、colBs；
+  遍历数组，判断在该位置上是否存在'B'，并且该行是否只有一个'B'，以及该列是否只有一个'B'。
+  
+Solution:
+  public int findLonelyPixel(char[][] picture) {
+		int res = 0;
+		if (picture == null || picture.length == 0 || picture[0].length == 0)
+			return 0;
+		int rows = picture.length;
+		int cols = picture[0].length;
+		int[] rowBs = new int[rows];
+		int[] colBs = new int[cols];
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (picture[i][j] == 'B') {
+					rowBs[i]++;
+					colBs[j]++;
+				}
+			}
+		}
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (picture[i][j] == 'B' && rowBs[i] == 1 && colBs[j] == 1)
+					res++;
+			}
+		}
+		return res;
+	}
