@@ -1,1 +1,49 @@
-
+OOM浅析：
+   jvm管理的内存大致包括三种不同类型的内存区域：Permanent Generation space（永久代保存区域）、Heap space（堆区域）、Java Stacks（Java栈）。
+   永久保存区域主要存放Class（类）和Meta的信息，Class第一次被Load的时候，被放入PermGen space区域，Class需要存储的内容主要包括方法和静态属性。
+   堆区域用于存放Class的实例（即对象），对象需要存储的内容主要是非静态属性。每次用new创建的一个对象实例后，对象实例存储在堆区域中，这部分空间被jvm的垃圾
+回收机制管理。
+   Java栈跟大多数编程语言包括汇编语言的栈功能相似，主要基于类型变量以及方法的输入输出参数。Java程序的每个程序中都有一个独立的堆栈。
+   容易发生内存溢出问题的内存空间包括：Permanent Generation space和Heap space。
+   
+第一种OutOfMemoryError: PermGen space
+   原因：程序中使用了大量的jar和class，使java虚拟机装载类的空间不够，与Permanent Generation space有关。
+   解决方法：
+      1、增加java虚拟机中XX:PermSize和XX:MaxPermSize参数的大小，其中XX:PermSize是初始永久保存区域大小，XX:MaxPermSize是最大永久保存区域大小。
+         如针对tomcat6.0，在catalina.sh 或catalina.bat文件中一系列环境变量名说明结束处（大约在70行左右） 增加一行：JAVA_OPTS=" -XX:PermSize=
+         64M -XX:MaxPermSize=128m"。
+         如果是windows服务器还可以在系统环境变量中设置。感觉用tomcat发布sprint+struts+hibernate架构的程序时很容易发生这种内存溢出错误。使用上述
+         方法，解决了部署ssh项目的tomcat服务器经常宕机的问题。
+      2、清理应用程序中web-inf/lib下的jar。
+         如果tomcat部署了多个应用，很多应用都使用了相同的jar，可以将共同的jar移到tomcat共同的lib下，减少类的重复加载。这种方法是网上部分人推荐的，
+         我没试过，但感觉减少不了太大的空间，最靠谱的还是第一种方法。
+第二种OutOfMemoryError：  Java heap space
+    原因：java虚拟机创建的对象太多，在进行垃圾回收之间，虚拟机分配的到堆内存空间已经用满了，与Heap space有关。
+    解决方法：
+       1、检查程序，看是否有死循环或不必要地重复创建大量对象。找到原因后，修改程序和算法。
+       2、增加Java虚拟机中Xms（初始堆大小）和Xmx（最大堆大小）参数的大小。如：set JAVA_OPTS= -Xms256m -Xmx1024m
+第三种OutOfMemoryError：unable to create new native thread
+    原因：Java线程个数很多的情况下容易发生。
+    
+代码中如何查看JVM内存设置信息：
+    1、Runtime.getRuntime().maxMemory(); 
+        最大可用内存,对应-Xmx；为JVM的最大可用内存,可通过-Xmx设置,默认值为物理内存的1/4,设值不能高于计算机物理内存;
+    2、Runtime.getRuntime().freeMemory(); 
+         当前JVM空闲内存;其为当前JVM空闲内存,因为JVM只有在需要内存时才占用物理内存使用,所以freeMemory()的值一般情况下都很小,而JVM实际可用内存并不等于
+         freeMemory(),而应该等maxMemory()-totalMemory()+freeMemory().及其设置JVM内存分配。
+    3、Runtime.getRuntime().totalMemory();
+        当前JVM占用的内存总数,其值相当于当前JVM已使用的内存及freeMemory()的总和。为当前JVM占用的内存总数,其值相当于当前JVM已使用的内存及freeMemory()
+        的总和,会随着JVM使用内存的增加而增加;
+ 
+补充各参数含义：
+     -vmargs：说明后面是VM（即Myeclipse虚拟机）的参数
+     -Xms128m：虚拟机占用系统的最小堆内存为128M
+     -Xmx512m：虚拟机占用系统的最大堆内存为512M
+     -XX:PermSize=128m：最小堆大小（最小永久保存区域）。一般报内存不足时,都是说这个太小,堆空间剩余小于5%就会警告,建议把这个稍微设大一点,不过要视自己
+         机器内存大小来设置。
+     -XX:MaxPermSize=256m：最大堆大小（最大永久保存区域）。这个也适当大些。
+     注意： -Xmx512M的5%为25.6M，理论上要求-Xmx的数值与-XX:MaxPermSize必须大于25.6M.
+     
+如何监视jvm内存?使用jvisualvm
+    不能一味加内存解决问题，最好定期检查一下程序对内存的消耗，以避免潜 在的内存溢出。建议大家使用jvisualvm来监控JVM。(JDK自带，命令行直接打
+    jvisualvm即可)。
