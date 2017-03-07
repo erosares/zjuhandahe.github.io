@@ -1,1 +1,25 @@
+递归写法：
 
+private void quickSort(int[] nums,int low,int high){
+     int q;
+     if(low<high){
+        q = partition(nums,low,high);
+        quickSort(nums,q+1,high);
+        quickSort(nums,low,q-1);
+  }
+}
+private int partition(int[] nums,int low,int high){
+    int key = nums[low];
+    while(low<high){
+       while(low<high && nums[high]>=key){
+           high--;
+       }
+       nums[low] = nums[high];
+       while(low<high && nums[low]<=key){
+           low++;
+       }
+       nums[high] = nums[low];
+    }
+    nums[low] = key;
+    return low;
+}
