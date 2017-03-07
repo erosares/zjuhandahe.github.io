@@ -1,6 +1,7 @@
 递归写法：
 
 private void quickSort(int[] nums,int low,int high){
+     //递归
      int q;
      if(low<high){
         q = partition(nums,low,high);
@@ -9,17 +10,18 @@ private void quickSort(int[] nums,int low,int high){
   }
 }
 private int partition(int[] nums,int low,int high){
+    //分治
     int key = nums[low];
     while(low<high){
-       while(low<high && nums[high]>=key){
+       while(low<high && nums[high]>=key){//从右到左
            high--;
        }
        nums[low] = nums[high];
-       while(low<high && nums[low]<=key){
+       while(low<high && nums[low]<=key){//从左到右
            low++;
        }
        nums[high] = nums[low];
     }
-    nums[low] = key;
-    return low;
+    nums[low] = key;//把轴元素放在轴所在的位置
+    return low;//返回轴所在的位置
 }
