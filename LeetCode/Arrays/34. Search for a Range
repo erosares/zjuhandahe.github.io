@@ -9,7 +9,9 @@ Example:
 -----------------------------------------------------MY-----------------------------------------------------------------
 Analysis:
     第一种：运用两个指针，left和right，从两头向中间匹配，直到nums[left]==tragt和nums[right]==target，其中需要注意多种特殊情况。
-    第二种：
+    第二种：运用折半查找方法，找到第一个大于等于traget的数的位置i。并找到第一个大于等于target+1的数的位置j，则区间为[i,j-1]；
+           特殊情况：折半查找的右侧right = nums.length，不能-1，若只有一个元素时，traget+1的位置-1就变成-1了，出现错误；	
+                    判断条件时，nums[left]!=target，则就说明了，折半查找没有找到没有找到target。
 Solutions:
     第一种：
         public int[] searchRange(int[] nums, int target) {
@@ -40,3 +42,24 @@ Solutions:
 		      return new int[] { left, right };
 	      }
     第二种：
+        public int[] searchRange3(int[] nums, int target) {
+		int left = firstGreaterEqual(nums, target);
+		if (left == nums.length || nums[left] != target) {
+			return new int[] { -1, -1 };
+		}
+		return new int[] { left, firstGreaterEqual(nums, target + 1) - 1 };
+	}
+
+	private static int firstGreaterEqual(int[] A, int target) {
+		int left = 0;
+		int right = A.length;
+		while (left < right) {
+			int mid = left + (right - left) / 2;
+			if (A[mid] < target) {
+				left = mid + 1;
+			} else {
+				right = mid;
+			}
+		}
+		return left;
+	}
