@@ -1,0 +1,28 @@
+Description:
+    Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
+Example:
+    For example, given the array [-2,1,-3,4,-1,2,1,-5,4],
+    the contiguous subarray [4,-1,2,1] has the largest sum = 6.
+    
+------------------------------------------------------------------MY-----------------------------------------------------------
+Analysis:
+    显然，这是一个优化的问题，通常通过DP来解决。所以说到DP，我们首先要弄清楚子问题的格式（或每个子问题的状态）。当我们想要提出递归关系时，
+    子问题的格式是有帮助的。
+    首先，我认为子问题应该类似于：maxSubArray(int A[],int i,int j)，这意味着maxSubArray为[i,j]。这样，我们的目标是弄清楚
+    maxSubArray(A, 0, A.length - 1)是什麽。但是，如果我们将子问题定义成这样的格式的话，将很难将原来的问题与子问题相关联起来。换句话说，
+    我不能够去分解原始问题为子问题，并使用子问题的解决方案以某种方式创建原始解决方案。
+    所以我改变子问题的格式为：maxSubArray(int A[], int i)，这意味着maxSubArray为A[0,i]，并意味着必须以A[i]作为结束的元素。
+    这样可以新建一个dp[n]来存放[0,i]的maxSubArray的max sum：
+             maxSubArray(A,i) = maxSubArray(A,i-1) > 0 ? maxSubArray(A,i-1) : 0 + A[i];
+Solution:
+    public int maxSubArray(int[] nums) {
+        int n = nums.length();
+        int[] dp = new int[n];
+        dp[0] = nums[0];
+        int max = dp[0];
+        for(int i=1;i<n;i++){
+            dp[i] = nums[i] + (dp[i-1] > 0 ? dp[i-1] ：0);
+            max = Math.max(max,dp[i]);
+        }
+        return max;
+    }
