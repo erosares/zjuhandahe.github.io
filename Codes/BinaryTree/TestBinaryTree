@@ -1,0 +1,25 @@
+package cn.edu.zju.hanson.mycode;
+
+import java.util.List;
+
+public class TestBinaryTree {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		BinaryTree binaryTree = new BinaryTree(null);
+		int[] nums = new int[] { 1, 54, 3, 4, 22, 32, 9, 5, 11, 43, 67 };
+		for (int i = 0; i < nums.length; i++) {
+			binaryTree.insert(nums[i]);
+		}
+		System.out.println(binaryTree.contains(54));
+		System.out.println(binaryTree.contains(1000));
+		System.out.println(binaryTree.findMax());
+		System.out.println(binaryTree.findMin());
+
+		List<Integer> res = binaryTree.getAscIndes();
+		System.out.println(res.toString());
+	}
+
+}
