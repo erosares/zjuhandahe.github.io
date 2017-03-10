@@ -1,1 +1,82 @@
-
+一、注解的常见作用：
+    1.生成文档。这是最常见的，也是java 最早提供的注解。常用的有@see @param @return 等；
+    2.跟踪代码依赖性，实现替代配置文件功能。比较常见的是spring 2.5 开始的基于注解配置。作用就是减少配置。现在的框架基本都使用了这种配置来减少配置文件
+      的数量；
+    3.在编译时进行格式检查。如@Override放在方法前，如果你这个方法并不是覆盖了超类方法，则编译时就能检查出；
+二、什麽是注解：
+    用一个词就可以描述注解，那就是元数据，即一种描述数据的数据。所以，可以说注解就是源代码的元数据。
+    Annotation是一种应用于类、方法、参数、变量、构造器及包声明中的特殊修饰符。它是一种由JSR-175标准选择用来描述元数据的一种工具。
+三、为什么要引入注解：
+    以前，XML被广泛应用于描述元数据，但我们希望描述元数据的内容与代码紧耦合，但是XML的目的又是分离代码和配置，所以XML不适用于描述元数据。
+    选择XML or Annotation场景：
+        1. 为应用设置大量的常量或参数 --> 选择XML --> 原因：它不会同特定的代码相连。
+        2. 把某个方法声明为服务 --> 选择Annotation --> 原因：这种情况下需要注解和方法紧密耦合起来。
+四：Annotation是如何工作？
+      1. Annotations仅仅是元数据，和业务逻辑无关。理解起来有点困难，但就是这样。如果Annotations不包含业务逻辑，那么必须有人来实现这些逻辑。元数
+    据的用户来做这个事情。Annotations仅仅提供它定义的属性(类/方法/包/域)的信息。Annotations的用户(同样是一些代码)来读取这些信息并实现必要
+    的逻辑。
+      2. 元注解：
+        J2SE5.0版本在 java.lang.annotation提供了四种元注解，专门注解其他的注解：
+        @Documented –注解是否将包含在JavaDoc中
+        @Retention –什么时候使用该注解
+        @Target –注解用于什么地方
+        @Inherited – 是否允许子类继承该注解
+        ***解释：
+        @Documented–一个简单的Annotations标记注解，表示是否将注解信息添加在java文档中。
+        @Retention– 定义该注解的生命周期。
+            RetentionPolicy.SOURCE – 在编译阶段丢弃。这些注解在编译结束之后就不再有任何意义，所以它们不会写入字节码。@Override, 
+                pressWarnings都属于这类注解。
+            RetentionPolicy.CLASS – 在类加载的时候丢弃。在字节码文件的处理中有用。注解默认使用这种方式。
+            RetentionPolicy.RUNTIME– 始终不会丢弃，运行期也保留该注解，因此可以使用反射机制读取该注解的信息。我们自定义的注解通常使用这种
+                方式。
+            @Target – 表示该注解用于什么地方。
+                ElementType.TYPE:用于描述类、接口或enum声明
+                ElementType.FIELD:用于描述实例变量
+                ElementType.METHOD
+                ElementType.PARAMETER
+                ElementType.CONSTRUCTOR
+                ElementType.LOCAL_VARIABLE
+                ElementType.ANNOTATION_TYPE 另一个注释
+                ElementType.PACKAGE 用于记录java文件的package信息
+            @Inherited – 定义该注释和子类的关系
+五、如何自定义注解：
+    Annotations只支持基本类型、String及枚举类型。注释中所有的属性被定义成方法，并允许提供默认值。
+    ------定义注解-------
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Todo {
+	    public enum Priority {
+		    LOW, MEDIUM, HIGH
+	    }
+	    public enum Status {
+		    STARTED, NOT_STARTED
+	    }
+	    String author() default "Yash";
+	    Priority priority() default Priority.LOW;
+	    Status status() default Status.STARTED;
+    }
+    ------使用注解------
+    public class BusinessLogic {
+	    @Todo(priority = Priority.HIGH, author = "Yashwant", status = Status.STARTED)
+	    public void incompleteMethod1() {
+	    }
+    }
+    ------解析注解------
+    public static void main(String[] args) {
+		Class businessLogicClass = BusinessLogic.class;
+		for (Method method : businessLogicClass.getMethods()) {
+			Todo annotationTodo = method.getAnnotation(Todo.class);
+			if (annotationTodo != null) {
+				System.out.println("Method Name: " + method.toString());
+				System.out.println("Author: " + annotationTodo.author());
+				System.out.println("priority: " + annotationTodo.priority());
+				System.out.println("status: " + annotationTodo.status());
+			}
+		}
+	}
+  ------结果------
+  Method Name: public void cn.edu.zju.hanson.mycode.BusinessLogic.incompleteMethod1()
+  Author: Yashwant
+  priority: HIGH
+  status: STARTED
+    
