@@ -1,0 +1,95 @@
+package cn.edu.zju.hanson.mycode;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BinaryTree {
+	private BinaryNode rootNode = null;
+
+	public BinaryTree(BinaryNode rootNode) {
+		this.rootNode = rootNode;
+	}
+
+	public boolean contains(Integer value) {
+		return contains(value, rootNode);
+	}
+
+	private boolean contains(Integer value, BinaryNode node) {
+		if (node == null)
+			return false;
+		int res = value.compareTo(node.data);
+		if (res > 0)
+			return contains(value, node.right);
+		else if (res < 0)
+			return contains(value, node.left);
+		else
+			return true;
+	}
+
+	// min
+	public Integer findMin() {
+		return findMin(rootNode).data;
+	}
+
+	private BinaryNode findMin(BinaryNode node) {
+		if (isEmpty())
+			return null;
+		if (node.left == null)
+			return node;
+		return findMin(node.left);
+	}
+
+	// max
+	public Integer findMax() {
+		return findMax(rootNode).data;
+	}
+
+	private BinaryNode findMax(BinaryNode node) {
+		if (isEmpty())
+			return null;
+		if (node.right == null) {
+			return node;
+		}
+
+		return findMax(node.right);
+	}
+
+	// insert
+	public void insert(Integer value) {
+		rootNode = insert(value, rootNode);
+	}
+
+	public BinaryNode insert(Integer value, BinaryNode node) {
+		if (node == null)
+			return new BinaryNode(value);
+		int res = value.compareTo(node.data);
+		if (res < 0)
+			node.left = insert(value, node.left);
+		else if (res > 0)
+			node.right = insert(value, node.right);
+		else
+			;
+		return node;
+	}
+
+	public List<Integer> getAscIndes() {
+		List<Integer> res = new ArrayList<Integer>();
+		getAscIndes(rootNode,res);
+		return res;
+	}
+
+	private void getAscIndes(BinaryNode node,List<Integer> list) {
+		if (node != null) {
+			getAscIndes(node.left,list);
+//			System.out.println(node.data);
+			list.add(node.data);
+			getAscIndes(node.right,list);
+		}
+
+	}
+
+	// isEmpty
+	public boolean isEmpty() {
+		return rootNode == null;
+	}
+}
