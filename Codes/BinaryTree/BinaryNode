@@ -1,0 +1,19 @@
+public class BinaryNode {
+	Integer data;
+	BinaryNode left;
+	BinaryNode right;
+
+	public BinaryNode(Integer data) {
+		this(data, null, null);
+	}
+
+	public BinaryNode() {
+	}
+
+	public BinaryNode(Integer data, BinaryNode left, BinaryNode right) {
+		this.data = data;
+		this.left = left;
+		this.right = right;
+	}
+
+}
