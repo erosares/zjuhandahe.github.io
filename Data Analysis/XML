@@ -1,1 +1,44 @@
-
+一、基本概念
+1. 可扩展标记语言（eXtensible Markup Language）：存储数据和传送数组
+2. 和JSON一样，常用于交互数据格式
+3. 一般的XML文档（XML Document）
+4. 举例：
+    <student> 【标签，表示开始】
+        <name>你</name>
+        <hobby>女</hobby>
+    </student> 【标签，表示结束】
+5. XML文档语法：
+    5.1 文档声明：在XML文档最前面，必须有一个文档声明
+         a. 最简单的声明： <?xml version = "1.0"?>
+         b. 用encoding属性，来说明文档字符编码：<?xml version = "1.0" encoding = "UTF-8"?>
+    5.2 元素（Element）：一个元素，会包含一个开始标签和一个结束标签
+        a. 有元素的内容：<name>你</name>
+        b. 无元素的内容：<name></name>
+        而且一个元素可以嵌套若干个子元素，但不能出现交叉嵌套
+        <students>
+          <student> 【标签，表示开始】
+              <name>你</name>
+             <hobby>女</hobby>
+         </student> 【标签，表示结束】
+      </stdudents>
+      ***注意：
+            1. 规范的 XML 文档最多只有一个根元素，其他的都是根元素的子孙元素。
+            2. 在 XML 中，空格和换行，都会被当做具体内容去处理，例如： a和b 是不一样的
+                  a <name>你</name>
+                   b <name>
+                    你
+                  </name>
+    5.3 属性（Atribute）：一个元素可以拥有多个属性，例如：
+          <video name="小黄人" hobby="apple"/>【video 元素拥有 name,hobby两个属性】
+          ***注意：
+                属性的值必须用 "" 或者 '' 括住
+                属性表示的信息，也可用子元素来表示，例如：
+                        <video>
+                             <name>小黄人</name>
+                             <hobby>apple</hobby>
+                        </video>
+6. 对XML文档的解析：
+    提取 name 元素里面的内容：<name>小黄人</name>
+    或者是提取 video 元素中 name 和 hobby 的值 ：<video name="小黄人" hobby="apple"/>
+    
+    二、解析
