@@ -1,4 +1,4 @@
-一、基本概念
+一、基本概念（XML被设计为传输和存储数据，其焦点是数据的内容；HTML被设计用来显示数据，其焦点是数据的外观）
 1. 可扩展标记语言（eXtensible Markup Language）：存储数据和传送数组
 2. 和JSON一样，常用于交互数据格式
 3. 一般的XML文档（XML Document）
@@ -40,5 +40,45 @@
 6. 对XML文档的解析：
     提取 name 元素里面的内容：<name>小黄人</name>
     或者是提取 video 元素中 name 和 hobby 的值 ：<video name="小黄人" hobby="apple"/>
-    
+7. XML允许自定义标签：XML允许创作者定义自己的标签和自己的文档结构
+8. XML标签对大小写敏感：
+    <Message>这是错误的。</message>
+    <message>这是正确的。</message> 
+9. 实体引用（转义字符）：
+    在 XML 中，一些字符拥有特殊的意义。 如果你把字符 “<” 放在 XML 元素中，会发生错误，这是因为解析器会把它当作新元素的开始。 这样会产生 XML 错误：
+    <message>if salary < 1000 then</message>
+    为了避免这个错误，请用实体引用来代替 “<” 字符：
+    <message>if salary &lt; 1000 then</message> 
+    在 XML 中，有 5 个预定义的实体引用：
+        &lt;    <   小于
+        &gt;    >   大于
+        &amp;   &   和号
+        &apos;  '   单引号
+        &quot;  "   引号
+        注释：在 XML 中，只有字符 “<” 和 “&” 确实是非法的。大于号是合法的，但是用实体引用来代替它是一个好习惯。
+10. 以 LF 存储换行
+    在 Windows 应用程序中，换行通常以一对字符来存储：回车符 (CR) 和换行符 (LF)。这对字符与打字机设置新行的动作有相似之处。
+    在 Unix 应用程序中，新行以 LF 字符存储。
+    而 Macintosh 应用程序使用CR来存储新行。
+11. XML CDATA
+    所有XML文档中的文本均会被解析器解析。
+    只有CDATA区段（CDATA section）中的文本会被解析器忽略。
+    某些文本，比如 JavaScript 代码，包含大量 “<” 或 “&” 字符。为了避免错误，可以将脚本代码定义为 CDATA。CDATA 部分中的所有内容都会被解析器忽略。 CDATA 部分由
+        “<![CDATA[” 开始，由 “]]>” 结束：
+        <script>
+        <![CDATA[
+        function matchwo(a,b)
+        {
+        if (a < b && a < 0) then
+            {
+                return1;
+            }
+        else
+            {
+                return 0;
+            }
+        }
+        ]]>
+        </script>
+        关于CDATA 部分的注释： CDATA部分不能包含字符串 “]]>”。也不允许嵌套的CDATA部分。 标记CDATA部分结尾的”]]>“ 不能包含空格或折行。
     二、解析
