@@ -1,1 +1,9 @@
 APP和网络服务器之间，以及APP和APP之间均需要传输和存储数据，其中一半都由XML和JSON负责传输和存储数据。
+1  定义： 从事先规定好的格式中提取数据
+    解析的前提：提前约定好格式，数据提供方按照格式提供数据、数据获取方则按照格式获取数据
+2  主流的数据交换格式有两种：XML 、JSON
+3  iOS 开发常见的解析 ：
+3.1  XML 解析 ：SAX 解析和DOM 解析
+       XML 解析工具：NSXMLParser、GDataXMLNode、TouchXML 和 KissXML 等
+3.2 JSON 解析
+解析工具：JSONKit、NSJSONSerialization、TouchJSON和SBJSON等，其中NSJSONSerialization（系统提供的解析类，性能最好的，解析效率最高）
