@@ -1,0 +1,30 @@
+Description:
+    Rotate an array of n elements to the right by k steps.
+Example:
+    For example, with n = 7 and k = 3, the array [1,2,3,4,5,6,7] is rotated to [5,6,7,1,2,3,4].
+Note:
+    Try to come up as many solutions as you can, there are at least 3 different ways to solve this problem.
+    
+---------------------------------------------------------------------------------------------------------------------MY-----------------------------------------------------------------------------------------------------------------
+Analysis:
+    在某个位置翻转数组，例如[1,2,3,4,5,6,7] --> [5,6,7,1,2,3,4]，k=3；
+    则可以将数组从k位置分为两部分（实际还是在原数组内操作），[1,2,3,4] & [5,6,7]，那么对两个数组分别进行翻转，则变为[4,3,2,1] & [7,6,5]，再将整个数组翻转，则为[5,6,7,1,2,3,4].
+Solutions:
+     public static void rotate(int[] nums, int k) {
+         if(nums == null || nums.length()<2 ) return;
+         int n = nums.length();
+         int k = k % n; //in order to promise the 'k' must between 0 and n-1
+         reverse(nums, 0, n-1-k); //not k, exceptional k=0
+         reverse(nums, n-k, n-1);// reverse(nums, (n-1)-k+1);   //not k+1 exceptional k=n-1
+         reverse(nums, 0, n-1);
+     }
+     
+      private static void reverse(int[] nums, int i, int j) {
+          while( i < j ){
+              int temp = nums[i];
+              nums[i] = nums[j];
+              nums[j] = temp;
+              i++;
+              j--;
+          }
+      }
