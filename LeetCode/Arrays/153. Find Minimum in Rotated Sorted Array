@@ -1,0 +1,33 @@
+Description:
+    Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+    (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+    Find the minimum element.
+    You may assume no duplicate exists in the array.
+
+----------------------------------------------------------------------------------------------------------------------------MY-------------------------------------------------------------------------------------------------------------------
+Analysis:
+    因为原数组是递增的有序数组，经过某个位置pivot的rotated后，变成一段或者两段的递增数组，由于两段分别递增，则可以使用折半查找的方法。
+    对几种情况的讨论：
+        1. nums[mid] < nums[mid-1]，由于两段都升序，那么就可以判断[0,mid-1]则为之前后半段转换到前面，[mid,length-1]则为前半段转换到后面的。
+            判断出pivot则为num[mid]。
+        2. nums[mid]>=nums[left] && nums[mid] > nums[right]，由于两段都升序，则min必在右半段，即[mid+1,right]。
+            否则，mid必在左半段，即[left,mid-1]。
+Solution:
+     public int findMin(int[] nums){
+         if(nums == null || nums.length() == 0) return -1;
+         if(nums.length() == 1) return nums[0];
+         int low = 0;
+         int high = nums.length()-1;
+         while(left < high){
+             int mid = (left + high)/2;
+             if(mid > 0 && nums[mid] < nums[mid-1]){
+                 return nums[mid];
+             }
+             if(nums[mid]>=nums[low] && nums[mid]>nums[high]){
+                 low = mid + 1;
+             }else{
+                 high = mid - 1;
+             }
+         }
+         return nums[low];
+     }
