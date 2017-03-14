@@ -4,6 +4,21 @@ Example:
     For example, given [0,1,2,4,5,7], return ["0->2","4->5","7"].
 --------------------------------------------------------------------------------------------------------------------------------------MY-----------------------------------------------------------------------------------------------------------------------
 Analysis:
-    
+    由于是递增数组，那么从左到右扫描数组，判断nums[i] == nums[i+1]，并对i++。
+    技巧：外圈循环变量i，每次进行++操作，同时里面进行判断的话，也要进行i++，这样两次i++，保证i的值正确。
 Solution:
-      
+      public static List<String> summaryRanges(int[] nums) {
+          List<String> list = new ArrayList<String>();
+          for(int i=0;i<nums.length();i++){
+              int num = nums[i];
+              while(i<nums.length()-1 && nums[i] +1 == nums[i+1]){
+                  i++;
+              }
+              if(num != nums[i]){
+                  list.add(num+"");
+              }else{
+                  list.add(num + "->" + nums[i]);
+              }
+          }
+          return list;
+      }
