@@ -1,0 +1,49 @@
+Description:
+    Given an integer n, generate a square matrix filled with elements from 1 to n2 in spiral order.
+Example:
+    For example,
+    Given n = 3,
+    You should return the following matrix:
+    [
+      [ 1,2,3 ],
+      [ 8,9,4 ],
+      [ 7,6,5 ]
+    ]
+    
+------------------------------------------------------------MY--------------------------------------------------------------
+Analysis:
+    根据题目要求，要得到n*n的矩阵，并且矩阵是按照螺旋次序排布：
+        (1)从左到右 --> (2)从上到下 --> (3)从右到左 --> (4)从下到上 --> (1) --> (2)......
+        那么就根据这个过程进行编码，主要设定四个指针，分别为左、右、上、下，并设置初值。while循环退出条件为左右指针碰撞，按照顺序进行四次循环，
+            每次循环后对指针做相应的++或者--操作。
+Solution:
+    public int[][] generateMatrix(int n) {
+        int[][] res = new int[n][n];
+		    if (n == 0) {
+			    return res;
+		    }
+		    int left = 0;
+		    int right = n - 1;
+		    int top = 0;
+		    int down = n - 1;
+		    int count = 1;
+		    while (left <= right) {
+			    for (int i = left; i <= right; i++) {
+				    res[top][i] = count++;
+			    }
+			    top++;
+			    for (int j = top; j <= down; j++) {
+				    res[j][right] = count++;
+			    }
+			    right--;
+			    for (int k = right; k >= left; k--) {
+				    res[down][k] = count++;
+			    }
+			    down--;
+			    for (int v = down; v >= top; v--) {
+				    res[v][left] = count++;
+			    }
+			    left++;
+		    }
+		    return res;
+    }
