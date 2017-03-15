@@ -20,3 +20,4 @@
    Math.ceil()用作向上取整。 
    Math.floor()用作向下取整。
    Math.round() 我们数学中常用到的四舍五入取整。
+5. main函数可以放在任何地方。
