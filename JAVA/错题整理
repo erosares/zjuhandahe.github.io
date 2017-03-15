@@ -1,0 +1,8 @@
+1. 优化Hibernate所鼓励的7大措施：
+    （1）尽量使用many-to-one，避免使用单项one-to-many；
+    （2）灵活使用单向one-to-many；
+    （3）不用一对一，使用多对一代替一对一；
+    （4）配置对象缓存，不使用集合缓存；
+    （5）一对多使用Bag， 多对一使用Set；
+    （6）继承使用显示多态 HQL:from object polymorphism="exlicit" 避免查处所有对象
+    （7）消除大表，使用二级缓存 
