@@ -18,7 +18,7 @@ Analysis:
     使用回溯的方法；
     这里外循环必须是循环二维数组，并在循环内回溯判断word是否匹配；
     boolean exist(char[][] board, int x, int y, String word, int start)方法解析：
-        当判断的厨师位置比word大于等于时，表明匹配结束，成功；
+        当判断的初识位置比word大于等于时，表明匹配结束，成功；
         越界的判断；
         当(board[x][y] == word.charAt(start++))为True时，需要将该位置的字符取出并去除，以免重复判断；
         实行回溯调用，从该位置有四个方向可以判断，因为之前该位置被设置为'#'，所以不担心会重复判断；
