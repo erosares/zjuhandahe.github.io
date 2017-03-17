@@ -6,5 +6,18 @@ Example:
 -------------------------------------------------------MY--------------------------------------------------------------------
 Analysis:
     1. 做链表操作，一般需要一个辅助节点，这里建立一个ListNode first = head;
-    2. 便利
+    2. 遍历链表while(head.next != null)，对每个节点进行判断。
+    3. 再返回时，判断首节点（之前的辅助节点first）。
 Solution:
+    public ListNode removeElements(ListNode head, int val) {
+        if(head == null) return null;
+        ListNode first = head;
+        while(head.next != null){
+            if(head.next.val == val){
+                head.next = head.next.next;
+            }else{
+                head = head.next;
+            }
+        }
+        return first.val == val ? first.next : first;
+    }
