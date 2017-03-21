@@ -1,0 +1,34 @@
+Description:
+    Given an absolute path for a file (Unix-style), simplify it.
+Example:
+    For example,
+    path = "/home/", => "/home"
+    path = "/a/./b/../../c/", => "/c"
+Corner Cases:
+    Did you consider the case where path = "/../"?
+    In this case, you should return "/".
+    Another corner case is the path might contain multiple slashes '/' together, such as "/home//foo/".
+    In this case, you should ignore redundant slashes and return "/home/foo".
+------------------------------------------------------------MY-----------------------------------------------------------------
+Analysis:
+    对于路径，".."则表示回到上层目录，以此来判断是否出队。
+    运用双向队列Deque（栈）来存储每个目录dir，目录可通过String.split("/")获得。
+    运用hashset记录三种特殊的字符串{".","..",""}，以此来判断是否入队。
+    最后输出的时候注意Deque的顺序，需要将dir逆序拼接。push是变为栈，add是变为队列。
+Solution:
+    public String simplifyPath(String path) {
+        Deque<String> deque = new ArrayDeque<String>();
+        Set<String> set = new HashSet<String>(Arrays.asList(".","..",""));
+        for(String dir : path.split("/")){
+            if(dir.equals("..") && !deque.isEmpty()){
+                deque.pop();
+            }else if(!set.contains(dir)){
+                deque.push(dir);
+            }
+        }
+        String res = "";
+        for(String dir : deque){
+            res = "/" + dir + res;
+        }
+        return res.equals("") ? "/" : res;
+    }
