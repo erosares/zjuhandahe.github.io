@@ -1,0 +1,42 @@
+Description:
+    Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+Example:
+    The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
+-----------------------------------------------------------------MY-------------------------------------------------------------------
+Analysis:
+    由于是配对，使用栈来操作，左侧进栈，右侧对应的出栈，要是完全配对，则最后栈必为空。
+Solution:
+    public boolean isValid(String s) {
+        if (s == null || s.length() == 0 || s.length() % 2 != 0)
+			    return false;
+		    Stack<Character> stack = new Stack<Character>();
+		    stack.push(s.charAt(0));
+		    for (int i = 1; i < s.length(); i++) {
+			    if (stack.isEmpty()) {
+				    stack.push(s.charAt(i));
+			    } else {
+				    if (stack.peek() == '(') {
+					    if (s.charAt(i) == ')') {
+						    stack.pop();
+					    } else {
+						    stack.push(s.charAt(i));
+					    }
+				    } else if (stack.peek() == '[') {
+					    if (s.charAt(i) == ']') {
+						    stack.pop();
+					    } else {
+						    stack.push(s.charAt(i));
+					    }
+				    } else if (stack.peek() == '{') {
+					    if (s.charAt(i) == '}') {
+						    stack.pop();
+					    } else {
+						    stack.push(s.charAt(i));
+					    }
+				    } else {
+					    stack.push(s.charAt(i));
+				    }
+			    }
+		    }
+		    return stack.isEmpty() ? true : false;
+    }
