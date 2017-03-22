@@ -1,0 +1,19 @@
+Description:
+    Given two strings s and t, write a function to determine if t is an anagram of s.
+Example:
+    For example,
+    s = "anagram", t = "nagaram", return true.
+    s = "rat", t = "car", return false.
+Note:
+    You may assume the string contains only lowercase alphabets.
+--------------------------------------------------------------------MY--------------------------------------------------------------
+Analysis:
+    对字符排序，拍完序后的String应该是相等的。
+Solution:
+    public boolean isAnagram(String s, String t) {
+        char[] schars = s.toCharArray();
+		    char[] tchars = t.toCharArray();
+		    Arrays.sort(schars);
+		    Arrays.sort(tchars);
+		    return Arrays.toString(schars).equals(Arrays.toString(tchars));
+    }
