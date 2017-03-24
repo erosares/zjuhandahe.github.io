@@ -1,0 +1,80 @@
+Description:
+    Given two arrays, write a function to compute their intersection.
+Example:
+    Given nums1 = [1, 2, 2, 1], nums2 = [2, 2], return [2, 2].
+Note:
+    Each element in the result should appear as many times as it shows in both arrays.
+    The result can be in any order.
+----------------------------------------------------------------MY---------------------------------------------------------------------
+Analysis:（求最小的交集部分）
+    Analysis one:
+        运用HashMap结构，相同key覆盖，++val。
+    Analysis two:
+        运用双指针方法，pointer1, pointer2。
+            nums1[pointer1]<nums2[pointer2]  pointer1++;
+            nums1[pointer1]>nums2[pointer2]  pointer2++;
+            nums1[pointer1] == nums2[pointer2]  list.add(nums1[pointer1]);pointer1++; pointer2++;
+Solution:
+    Solution one:
+        public static int[] intersect1(int[] nums1, int[] nums2) {
+		        Map<Integer, Integer> nums1Map = new HashMap<Integer, Integer>();
+		        Map<Integer, Integer> nums2Map = new HashMap<Integer, Integer>();
+		        for (int num1 : nums1) {
+			        boolean b = nums1Map.keySet().contains(num1);
+			        if (!b) {
+				        nums1Map.put(num1, 1);
+			        } else {
+				        int val = nums1Map.get(num1);
+				        nums1Map.put(num1, ++val);
+			        }
+		        }
+		        for (int num2 : nums2) {
+			        boolean b = nums2Map.keySet().contains(num2);
+			        if (!b) {
+				        nums2Map.put(num2, 1);
+			        } else {
+				        int val = nums2Map.get(num2);
+				        nums2Map.put(num2, ++val);
+			        }
+		        }
+		        List<Integer> res = new LinkedList<Integer>();
+		        for (Entry<Integer, Integer> num1 : nums1Map.entrySet()) {
+			        if (nums2Map.containsKey(num1.getKey())) {
+				        for (int i = 0; i < Math.min(nums2Map.get(num1.getKey()),
+						        num1.getValue()); i++) {
+					        res.add(num1.getKey());
+				        }
+			        }
+		        }
+		        int[] result = new int[res.size()];
+		        int i = 0;
+		        for (Integer num : res) {
+			        result[i++] = num;
+		        }
+		        return result;
+	      }
+    Solution two:
+        public static int[] intersect(int[] nums1, int[] nums2) {
+		        Arrays.sort(nums1);
+		        Arrays.sort(nums2);
+		        int pointer1 = 0;
+		        int pointer2 = 0;
+		        List<Integer> res = new LinkedList<Integer>();
+		        while (pointer1 < nums1.length && pointer2 < nums2.length) {
+			        if (nums1[pointer1] < nums2[pointer2]) {
+				        pointer1++;
+			        } else if (nums1[pointer1] > nums2[pointer2]) {
+				        pointer2++;
+			        } else {
+				        res.add(nums1[pointer1]);
+				        pointer1++;
+				        pointer2++;
+			        }
+		        }
+		        int[] result = new int[res.size()];
+		        int i = 0;
+		        for (Integer num : res) {
+			        result[i++] = num;
+		        }
+		        return result;
+	      }
