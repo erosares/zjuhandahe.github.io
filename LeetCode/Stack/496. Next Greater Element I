@@ -26,6 +26,7 @@ Analysis:
         运用双重循环方法，外层遍历findNums(即nums1)，内层遍历nums(即nums2)，遍历内层比较findNums[i]和nums2[j]，记录相等时index=j值
             （index初值设为nums2.length），再向后比较nums2[j]>findNums[i]，找到首次大于的位置（该判断需要加上j>index）。
     Analysis two:
+        运用栈stack方式，定义一个map用于存放nums2中每个元素grater的key-value对，num前面没有比较小于num的数。
 Solution:
     Solution one:
     public int[] nextGreaterElement(int[] findNums, int[] nums) {
@@ -47,3 +48,16 @@ Solution:
         return res;
     }
     Solution two:
+    public int[] nextGreaterElement(int[] findNums, int[] nums) {
+        Map<Integer,Integer> map = new HashMap<>():
+        Stack<Integer> stack = new Stack<>();
+        for(int num : nums){
+            while(!stack.isEmpty() && stack.peek() < num){
+                map.push(stack.pop(),num);
+            }
+            stack.put(num);
+        }
+        for(int i=0;i<findNums.length;i++){
+            findNums[i] = map.getOrDefault(findNums[i],-1);
+        }
+    }
