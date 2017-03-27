@@ -1,0 +1,5 @@
+1. 应用程序PING 发出的是_______报文？   ICMP请求报文
+   ICMP(Internet Control Message Protocol)Internet控制报文协议，用于在IP主机、路由器之间传递控制消息。控制消息是指网络 不通、主机是否可达、路由是否
+   可用等网络本身的消息。
+2. 使用traceroute命令测试网络时可以？   显示分组到达目标路径上经过的各路由器
+   traceroute指令让你追踪网络数据包的路由途径。
