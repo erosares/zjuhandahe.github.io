@@ -10,6 +10,8 @@ Analysis:
     Analysis one:
         模拟两个数相乘，将逐位的乘机放在list中，并实现两个String相加，模拟加法。
     Analysis two:
+        观察得到：num1 * num2，乘积的总位数为num1.length + num2.length，并且:
+                     num1[i] * num2[j]` will be placed at indices `[i + j`, `i + j + 1]` 。
 Solutions:
     Solution one:
     public String multiply(String num1, String num2) {
@@ -75,4 +77,27 @@ Solutions:
         return sb.reverse().toString();
     }
     Solution two:
-    
+         public String multiply(String num1, String num2) {
+             int m = num1.length();
+             int n = num2.length();
+             int[] posts = new int[m+n];
+             for(int i=m-1;i>=0;i--){
+                 for(int j=m-1;j>=0;j--){
+                     int temp = (num1.charAt(i)-'0') * (num2.charAt(j));
+                     int post1 = i+j;
+                     int post2 = i+j+1;
+                     int sum = temp + posts[post2];
+                     
+                     posts[post1] += sum / 10;
+                     posts[post2] = sum %10;
+                     
+                 }
+             }
+             Stringbuilder sb = new StringBuilder("");
+             for(int num : posts){
+                 if(!(posts.length==0 || num == 0)){
+                     sb.append(num);
+                 }
+             }
+             return sb.length()==0?"0":sb.toString();
+         }
