@@ -1,0 +1,33 @@
+Description:
+    Given a string s, find the longest palindromic substring in s. You may assume that the maximum length of s is 1000.
+Example:
+    Input: "babad"
+    Output: "bab"
+    Note: "aba" is also a valid answer.
+    
+    Input: "cbbd"
+    Output: "bb"
+-------------------------------------------------------------------MY--------------------------------------------------------------------
+Analyais:
+    one:DP动态规划
+        总体步骤为：双重循环，从尾部向前找每个符合回文的字符串，再找出最长字符串--判断此字符串是否比之前的字符串长。
+                   二维数组确定字符串两个位置i j构成的子串是否是回文，dp[i][j]=true or false，s{i....j}是回文的充分必要条件为
+                   s[i]==s[j]&&dp[i+1][j-1] == true，同时注意字符串位数小于等于3位的情况。
+                       1位   回文；       2位   相等aa  回文；       3位   收尾相等  aba   回文。
+Solution:
+    one:
+    public String longestPalindrome(String s) {
+        int n = s.length();
+        String res = null;
+        boolean[][] dp = new boolean[n][n];//构成动态规划二维数组，记录s{i.....j}是否是回文，初始化为false
+        
+        for(int i=n-1;i>=0;i--){//从尾部向前遍历
+            for(int j=i;j<n;j++){//j必须从i开始，因为i==j是，一位字母肯定是回文
+                dp[i][j] = (s.charAt(i) == s.charAt(j)) && (j-i<3 || dp[i+1][j-1]);//j-i<3，说明位数小于3位，这里只要s[i]==s[j]，那一定是回文
+                if(dp[i][j] && (res == null || i-j+1>res.length())){//这里获取最长回文，i-j+1>res.length()表示此回文长于之前
+                    res = s.subString(i,j+1);
+                }
+            }
+        }
+        return res;
+    }
