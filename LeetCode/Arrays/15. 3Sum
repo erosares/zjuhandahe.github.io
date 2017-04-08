@@ -5,8 +5,34 @@ Note:
     The solution set must not contain duplicate triplets.
 ------------------------------------------------------------MY------------------------------------------------------------------------
 Analysis:
-    One:
-    Two:
+    运用双指针将复杂度降到O(n^2)，同时双指针，必然对数组进行排序。
+        1. 对数组排序
+        2. 双指针，外层循环i {0,n-1}，内层循环left = i+1; right = n-1;
+        3. target=0, 则只要判断sum = 0-nums[i]  {(1)需要判断nums[i]==nums[i-1]，相等需要跳过i，循环到i++},nums[left]+nums[right]和sum的大小关系：
+            ==   满足条件，存入list;      {(2)需要判断nums[left]==nums[left+1], left++;}   {(3)需要判断nums[right]==nums[right-1],right--;}
+            <    left++;    
+            >    right++;
+        注意点：因为存在重复的情况，则在(1)(2)(3)地方需要注意
 Solution:
-    One:
-    Two:
+    public List<List<Integer>> threeSum(int[] nums) {
+        Arrays.sort(nums);//首先先排序
+        List<List<Integer>> results = new ArrayList<>();
+        for(int i=0;i<nums.length;i++){
+            if(i==0 || (i>0 && nums[i]!=nums[i-1])){//判断相邻的重复数字，有重复，跳到i++
+                int sum = 0 - nums[i];//减去一个数的值，留下两个数的和，用于判断nums[left]+nums[right]==sum
+                int left=i+1,right=nums.length-1;//i+1用于从i后面开始判断
+                while(left < right){
+                    if((nums[left]+nums[right]) == sum){
+                        results.add(Arrays.asList(nums[i],nums[left],nums[right]));
+                        while(left<right && nums[left] == num[left+1])  left++;
+                        while(right>left && nums[right] == nums[right-1])  right--;
+                        left++;right--;
+                    }else if(nums[left]+nums[right]) < sum){
+                        left++;
+                    }else{
+                        right--;
+                    }
+                }
+            }
+        }
+    }
