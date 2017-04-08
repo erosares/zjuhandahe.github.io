@@ -3,6 +3,14 @@ Description:
     gives the sum of zero.
 Note:
     The solution set must not contain duplicate triplets.
+Example:
+    For example, given array S = [-1, 0, 1, 2, -1, -4],
+    
+    A solution set is:
+    [
+      [-1, 0, 1],
+      [-1, -1, 2]
+    ]
 ------------------------------------------------------------MY------------------------------------------------------------------------
 Analysis:
     运用双指针将复杂度降到O(n^2)，同时双指针，必然对数组进行排序。
