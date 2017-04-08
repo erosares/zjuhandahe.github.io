@@ -19,7 +19,6 @@ Analysis:
         (1) 最外层循环i{0...n-3}  第二层循环j{i+1...n-2}  最后的while循环left=j+1  right=n-1
         (2) 第一层循环之后的if判断重复[ i==0 || i>0&&nums[i]!=nums[i-1] ]
             第二层循环之后的if判断重复（因为每次i在变化，判断是相对于i为边界）[ j==i+1 || j>i&&nums[j]!=nums[j-1]]
-    Two:
 Solution:
     One:
     public List<List<Integer>> fourSum(int[] nums, int target) {
@@ -50,4 +49,3 @@ Solution:
         }
         return results;
     }
-    Two:
