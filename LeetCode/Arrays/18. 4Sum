@@ -15,4 +15,39 @@ Example:
     
 --------------------------------------------------------------------MY-------------------------------------------------------------------
 Analysis:
+    One:运用Sum3的方法，需要注意的地方：
+        (1) 最外层循环i{0...n-3}  第二层循环j{i+1...n-2}  最后的while循环left=j+1  right=n-1
+        (2) 第一层循环之后的if判断重复[ i==0 || i>0&&nums[i]!=nums[i-1] ]
+            第二层循环之后的if判断重复（因为每次i在变化，判断是相对于i为边界）[ j==i+1 || j>i&&nums[j]!=nums[j-1]]
+    Two:
 Solution:
+    One:
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        Arrays.sort(nums);
+        List<List<Integer>> results = new ArrayList<>();
+        for(int i=0;i<nums.length-3;i++){//i {0...n-3}
+            if(i==0 || i>0&&nums[i]!=nums[i-1]){//跳过重复，判断i==0，边界为0
+                for(int j=i+1;j<nums.length-2;j++){//j  {i+1...n-2}
+                    if(j==i+1 && j>i&&nums[j]!=nums[j-1]){//跳过重复，判断j==i+1，边界为i+1
+                        int sum = target - nums[i] - nums[j];
+                        int left = j+1,right = nums.length-1;
+                        
+                        while(left < right){
+                            if(nums[left] + nums[right] == sum){
+                                results.add(Arrays.asList(nums[i],nums[j],nums[left],nums[right]));
+                                while(left<right && nums[left]==nums[left+1]) left++;
+                                while(right>left && nums[right]==nums[right-1]) right--;
+                                left++;right--;
+                            }else if(nums[left] + nums[right] < sum){
+                                left++;
+                            }else{
+                                right--;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return results;
+    }
+    Two:
