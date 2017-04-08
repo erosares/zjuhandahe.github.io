@@ -7,6 +7,27 @@ Example:
     
 -----------------------------------------------------------------MY---------------------------------------------------------------------
 Analysis:
-    
+    双指针方法，注意在开始时候设置一个最小值min = nums[0]+nums[1]+nums[nums.length-1]，
+    然后进行排序，
+    接着双重循环加双指针，目的是让sum = nums[i]+nums[left]+nums[right]不停地逼近target，并每次比较是不是最近。
 Solution:
+    public int threeSumClosest(int[] nums, int target) {
+        int min = nums[0] + nums[1] + nums[nums.length-1];
+        Arrays.sort(nums);
+        for(int i=0;i<nums.length-2;i++){
+            int left = i+1, right = nums.length-1;
+            while(left < right){
+                int sum = nums[i] + nums[left] + nums[right];
+                if(sum < target){
+                    left++;
+                }else{
+                    right--;
+                }
+                if(Math.abs(target-sum) < Math.abs(target-min)){
+                    min = sum;
+                }
+            }
+        }
+        return min;
+    }
     
