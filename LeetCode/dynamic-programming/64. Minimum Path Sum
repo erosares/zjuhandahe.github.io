@@ -1,0 +1,40 @@
+Description:
+    Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers 
+    along its path.
+Note:
+    You can only move either down or right at any point in time.
+-------------------------------------------------------------MY---------------------------------------------------------------------
+Analysis:
+    One: DP动态规划
+        这是典型的动态规划求解问题，最重要的是确定动态规划的三要素：问题的阶段，每个阶段的状态以及从前一个阶段转化到后一个阶段之间的递推关系。
+                                           阶段           状态        递推关系
+        整个求解过程可以用一个最优决策表来描述，最优决策表是一个二维表，其中行表示决策的阶段，列表是问题的状态，表格需要填写的数据一般对应此问题在某个
+        阶段某个状态下的最优值（如最短路径，最长公共子序列，最大价值等），填表的过程就是根据递推关系，从1行1列开始，以行或列优先的顺序，依次填写表格，
+        最后根据整个表格的数据通过简单的取舍或者运算求得问题的最优解。
+        
+        本题我们首先可以找出递推关系，比如设存放起点到每个格子i,j的最小路径和的二维数组为MPS[i][j]，那么递推公式为：
+             MPS[i][j] = Math.min(MPS[i-1][j] , MPS[i][j-1]) + MPS[i][j];
+        即格子i,j的MPS值可能有两个来源：其左侧格子i,j-1或者其上面格子i,j-1，取这两个来源的较小的MPS值，再加上当前格子的值val[i][j]即为结果。
+    Two: Recursive递归
+Solution:
+    One:
+    public int minPathSum(int[][] grid) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+        
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                if(i==0 && j==0){
+                    grid[i][j] = grid[0][0];
+                }else if(i==0 && j!=0){
+                    grid[i][j] = grid[0][j-1] + grid[i][j];
+                }else if(i!=0 && j==0){
+                    grid[i][j] = grid[i-1][j] + grid[i][j];
+                }else {
+                    grid[i][j] = Math.min(grid[i-1][j],grid[i][j-1]) + grid[i][j];
+                }
+            }
+        }
+        return grid[rows-1][cols-1];
+    }
+    Two:
