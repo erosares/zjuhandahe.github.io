@@ -1,0 +1,32 @@
+Description:
+    You are climbing a stair case. It takes n steps to reach to the top.
+    Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+Note:
+    Given n will be a positive integer.
+
+--------------------------------------------------------MY------------------------------------------------------------------------------
+Analysis:
+    对于第 k 阶台阶的走法，应该为之前 k-1 和 k-2 的走法的和，那么可以推断出公式为:
+                               countOfWays(n) = countOfWays(n-1) + countOfWays(n-2);
+    那么最直接的想法类似于求解Fibonacci{1,1,2,3,5,8...}
+                           public int climbStairs(int n) {
+                                if(n==1) return 1;
+                                if(n==2) return 2;
+                                return climbStairs(n-1)+climbStairs(n-2);
+                           }
+               非常简单直接的解法，但是超时了，原因在于递归算法，不保存中间结果，对于每次新的n，那么对之前的每一步都重复进行计算，这样导致耗时太严重。
+               那么解决问题的思路在于：如何不重复计算，即每步保存计算结果，代下面的计算直接使用。
+               对于本题，对 n 来说，只需要知道 n-1 和 n-2 的走法数量，那么必须每步保存 n-1 和 n-2 的走法结果即可。
+               对于可以保存前面的计算结果的算法，首先想到的是DP。
+Solution:
+    public int climbStairs(int n) {
+        if(n==1) return 1;
+        if(n==2) return 2;
+        
+        int a=1,b=2,cur=0;//a代表n-2的结果,b代表n-1的结果
+        for(int i=3;i<=n;i++){
+            cur = a+b;
+            a = b;//(n-2)-->(n-1)，则a的走法数量变为之前b的走法数量
+            b = cur;//(n-1)--(n)，则b的走法数量变为之前n（cur）的走法数量
+        }
+    }
