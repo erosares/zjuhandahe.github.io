@@ -1,0 +1,130 @@
+Exception Management Model (EMM)
+
+Prepared by:
+Georgios Vetoulis
+September 19, 2016
+Version 1.0
+
+
+Introduction
+
+Background information
+Currently we have a library of about 70-80 checks that run on an event basis against several systems. Many of the checks run daily in order to test the data sourcing process and also several run when we do the full analytics run (typically once a week). The results are communicated in real time via email sent to designated individuals. A check may be of interest to multiple groups. Also a given person may receive multiple emails in a given day, one for each check to which they subscribe. In case of re-runs, a new email per check would be sent. In addition, after a weekly full run we generate a single report per business line in excel format which contains the status of multiple checks, typically grouped by business line. 
+Although the current OCF core functionality is sound and the checks are useful, a number of issues need to be addressed with respect to the end-user experience.
+a.	Report package generation is currently a manual process, time-consuming, error-prone and hard to scale.
+b.	 Only the results of the latest run of a check are maintained.
+c.	The email notifications and the report packages have some shortcomings that diminish their usability, principally that column headers and the column ordering of the output of each check cannot be described in the OCF framework.  Therefore, we are trying to achieve the desired naming and ordering by renaming variables etc. This needlessly makes the checks harder to create and maintain, and in the end is not satisfactory anyway  
+d.	There is no access control on the results of the OCF checks. This allows for confidential data leakage through OCF checks that execute code against systems to which the email recipient of an OCF check notification does not have access.
+
+In general, we believe that there is a place for various ways of delivering exception results each with its own benefits and uses. Here is a list of the three modalities.
+•	Email (per check) to designated individuals
+•	BI dashboard accessible to designated individuals
+•	IRD multiple-check reports sent to designated individuals
+Email pros/cons
+Pros:
+•	Good for operations 
+•	Real time notification and response for targeted fixes to issues.
+Cons:
+•	Cannot create global reports out of it
+•	Too much traffic for people who subscribe to many checks
+•	Harder to construct overall picture of Data Quality
+BI tools (Spotfire etc)
+Pros:
+•	At-a-glance view of issues
+•	Allows grouping of issues by related entities
+•	In case of data or process fixes the dashboard will automatically clear out.
+•	Allows hyperlinking into underlying data
+Cons:
+•	A dashboard requires all items to be present, so there is always some lag. 
+•	It is not suitable for quick operational response. 
+•	Requires much more up-front design.
+IRD Reports
+Pros:
+•	Frozen copy of data quality state
+•	Auditable artifact
+•	Portable summary in familiar excel/pdf formats.
+•	Server-based, suitable for enterprise deployment
+Cons:
+•	By definition stale information
+•	Not suitable for quick responses.
+
+Goals
+Given the use being made of the results of these checks and the discussion of their place in a data governance framework we are proposing the creation of a new ESP model (Exception Management Model) to allow for the following:
+1.	Permanence of exception-related data, both for audit purposes and for easier issue tracking and resolution. Unified view of exception records generated through OCF and non-OCF systems.
+2.	Data Confidentiality during exception reporting
+3.	Automation of exception report generation
+4.	Ability to specify the appearance of exception records, support for the use of BI tools.
+
+Proposal
+At a high level we propose the creation of
+1.	An ESP category that will permanently hold the results of non-OCF data quality checks. 
+2.	A reference category that will maintain a mapping between exception report columns and human readable names as well as column ordering and data type. This will address the concern that several of the displayed entities in the current OCF checks are hard to explain to end users.
+3.	A reference category that will contain the entitlement information of each check. This should address the concerns about confidentiality in exception records.
+4.	Necessary data marts in ESP to unify the existing OCF exception data with the non-OCF check results
+
+
+
+With this information in place we would be able to create and send reports automatically via IRD which would automate away a currently manual and time-consuming process. These reports will be driven by datamarts customized for the recipient. We propose that a main criterion for grouping checks in a single report would be the basic entity for which an exception is being generated. 
+For example we could have a single report listing exceptions at the security level, another for counterparty-level exceptions etc.  These reports would be filtered by the entitlement information for each check/owner combination. Examples of other base entities are 
+
+
+UCI
+Ultimate parent
+Accounts
+Agreement Containers
+CSA IDs
+Instruments
+Netting Sets
+Positions
+Scenario Reference
+Trades
+
+ The above list does not mean that exception reports have to be exclusively based on these entities. It is just an indicative list that can be used as an organizing aid. Currently several of the OCF checks return results based on combinations of counterparty and securities for example, or combinations of scenarios and counterparties etc., so we already have use cases for creating reports based on combinations of the above entities.
+Our first deliverable would be the automated IRD reports, so that a currently manual and time-consuming process can be eliminated. The ESP system allows for the creation of reports (deliverables) based on satisfying some conditions (services). In this case, the execution of all checks that belong to a particular group would trigger the creation of a report that contains the results of these checks. Clearly a check may be part of multiple reports.
+ The EMM model allows use of BI tools as desired.
+ Emails will continue being sent as required. Possibly some of the current email recipients can switch to only receiving an IRD report.     
+Below is a diagram of the proposed process:  In the following, OCF_CHECK_RESULTS was created by ESP to permanently store OCF-generated exception results. This functionality is currently not working, although it was delivered to production and ESP core is looking into it. 
+The general idea is that OCF taps into “Data sources” and is itself an “Exception source”. There are systems like MDD or CCT that contain large amounts of data for which data quality testing is required. However, they can do the testing internally without having to ship large datasets to OCF for testing. So, the idea is that these systems can run their own internal data checks, and act as “exception sources” themselves by posting the results of their quality checks to EMM_CHECK_RESULTS.
+EMM_CHECK_RESULTS has a schema very similar to that of OCF_CHECK_RESULTS. The combined exception records from OCF and non-OCF sources will be in DM_EMM_RUN_CHECKS. At that point, IRD can generate exception reports specific to a user and particular check groupings. For example, there could be a report about security-level exceptions for user A, another one about counterparty-level ones for users A and B and so forth, all driven by the final DM_EMM_RUN_CHECKS datamart. The header information and column ordering of these IRD reports will be sourced from the reference table EMM_REF_DQ_CHECK_COL_MAP and the entitlement information from EMM_REF_DQ_OWNER_GROUP_MAP. These reports will transparently include information from both OCF and any non-OCF sources.
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Risks and Considerations
+
+During discussions with ESP, they adopted the story of permanent storage, and although it is considered delivered it is not working. This is a risk for this model, as we now assume that this core functionality is available. ESP has a story for fixing this as of 2016-09-21.
+The ESP team has done some design work towards controlling access to exception results, and we need to see if this addresses the issue of data leakage we described back in May 2016 and how it interacts with our proposal. As of 2016-09-21 they are working on the design of their OCF report entitlements.
+While the basic category/datamart setup is expected to be relatively simple, IRD skills are necessary in order to create the end-user reports, which can be an ongoing process with changing requirements by the end user. 
+Milestones
+
+Creation of EMM model in ESP (done)
+Implementation of EMM schema within the EMM model (Iqbal is working on sizing the project and building team)
+Creation of IRD exception reports, with their dependencies and distribution list. 
+
+
+
+
+.
+
+Notes
+
+Iqbal Ismail is lead developer, Gopal Balasubramanian is IT approver and Milena Tzigantcheva is business approver for the EMM model. 
+
+
