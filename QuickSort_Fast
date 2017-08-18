@@ -1,0 +1,111 @@
+package cn.zjuhanson.datastructure.sort;
+
+import java.util.Arrays;
+
+public class QuickSortFast {
+
+	public static void main(String[] args) {
+		int[] array = new int[] { -2, 3, 3, 1, -2, 10, 30, 20, 10, 20, -9, 10,
+				-8, -5, -9, 30 };
+		quickSort(array, 0, array.length - 1);
+		System.out.println(Arrays.toString(array));
+	}
+
+	public static void quickSort(int[] array, int lo, int hi) {
+		int first = lo;
+		int last = hi;
+
+		int left = lo;
+		int right = hi;
+
+		int leftLen = 0;
+		int rightLen = 0;
+
+		if (hi - lo + 1 < 10) {
+			InsertSort(array, lo, hi);
+			return;// 这边必须退出
+		}
+		int key = SelectPivotMedianOfThree(array, left, right);
+
+		/** 一次分割排序 **/
+		// 依然和以前的排序过程一致，只是增加了left和right记录
+		while (lo < hi) {
+			while (lo < hi && array[hi] >= key) {
+				if (array[hi] == key) {
+					swap(array[right], array[hi]);
+					right--;
+					rightLen++;
+				}
+				hi--;
+			}
+			array[lo] = array[hi];
+			while (lo < hi && array[lo] <= key) {
+				if (array[lo] == key) {
+					swap(array[left], array[lo]);
+					left++;
+					leftLen++;
+				}
+				lo++;
+			}
+			array[hi] = array[lo];
+		}
+		array[lo] = key;
+
+		/** 一次快排结束，将与枢纽值一样的数从两端移到枢纽附近 **/
+		int i = lo - 1;
+		int j = first;
+		while (j < left && array[i] != key) {
+			swap(array[i], array[j]);
+			i--;
+			j++;
+		}
+
+		i = lo + 1;
+		j = last;
+		while (j > right && array[j] != key) {
+			swap(array[i], array[j]);
+			i++;
+			j--;
+		}
+
+		/** 递归 **/
+		quickSort(array, first, lo - 1 - leftLen);
+		quickSort(array, lo + 1 + rightLen, last);
+
+	}
+
+	// 取三个数的排序中间值作为枢纽
+	public static int SelectPivotMedianOfThree(int[] array, int lo, int hi) {
+		int mid = lo + ((hi - lo) >> 1);
+		System.out.println("mid: " + mid + "    " + "hi: " + hi);
+		if (array[mid] > array[hi]) {
+			swap(array[mid], array[hi]);
+		}
+		if (array[lo] > array[hi]) {
+			swap(array[lo], array[hi]);
+		}
+		if (array[lo] < array[mid]) {
+			swap(array[lo], array[mid]);
+		}
+		// 将中间值放在lo的位置，这样不需要再去修改之前的代码
+		return array[lo];
+	}
+
+	// 插入排序
+	public static void InsertSort(int[] array, int lo, int hi) {
+		for (int i = 1; i < hi; i++) {
+			for (int j = i; j > lo; j--) {
+				if (array[j] < array[j - 1]) {
+					swap(array[j], array[j - 1]);
+				}
+			}
+		}
+	}
+
+	public static void swap(int a, int b) {
+		a = a ^ b;
+		b = a ^ b;
+		a = b ^ a;
+	}
+
+}
