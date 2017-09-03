@@ -1,1 +1,45 @@
+题目和要求：
+1、求字符串的全排列，例如abc --> abc,acb,bac,bca,cab和cba;
+2、字符串中存在重复值，全排列中不存在重复值；aabbc --> abc,acb,bac,bca,cab和cba;
+3、按照字符串字典顺序打印；
 
+
+答案：
+import java.util.*;
+public class Solution {
+    public ArrayList<String> Permutation(String str) {
+       ArrayList<String> ret = new ArrayList<String>();
+       allPermutation(str.toCharArray(),ret,0);
+       Collections.sort(ret);
+       return ret;
+    }
+    
+    public void allPermutation(char[] c,ArrayList<String> list,int start){
+        if(start==c.length-1) list.add(String.valueOf(c));
+        else{
+            for(int i=start;i<c.length;i++){
+                if(!isSwap(c,start,i)){
+                    swap(c,i,start);
+                    allPermutation(c,list,start+1);
+                    swap(c,start,i);
+                }
+            }
+        }
+    }
+    //处理重复
+    //和后面的字符比较，不等的时候才交换
+    public boolean isSwap(char[] c,int start,int end){
+        for(int i=start;i<end;i++){
+            if(c[i]==c[end]){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void swap(char[] c,int i,int j){
+        char temp = c[i];
+        c[i] = c[j];
+        c[j] = temp;
+    }
+}
